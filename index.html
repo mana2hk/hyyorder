@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>合香園 落單系統 (無價錢版)</title>
+    <style>
+        :root {
+            --bg-body: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-subtle: #f8fafc;
+            --bg-input: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --text-light: #94a3b8;
+            --border-color: #e2e8f0;
+            --border-strong: #cbd5e1;
+            --brand: #ea580c;
+            --brand-dark: #c2410c;
+            --brand-darker: #9a3412;
+            --brand-light: #fff7ed;
+            --brand-border: #fed7aa;
+            --wa-green: #059669;
+            --wa-green-dark: #047857;
+            --danger: #dc2626;
+            --danger-light: #fef2f2;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+            --shadow-lg: 0 14px 36px rgba(15, 23, 42, 0.2);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-full: 9999px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang HK", "Microsoft JhengHei", "Noto Sans TC", "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.45;
+            min-height: 100vh;
+            padding-bottom: 92px;
+            overflow-x: hidden;
+        }
+
+        button, input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: transform 0.1s ease, background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        button:active { transform: scale(0.97); }
+
+        svg.icon {
+            width: 18px; height: 18px; flex-shrink: 0;
+            fill: none; stroke: currentColor; stroke-width: 2;
+            stroke-linecap: round; stroke-linejoin: round;
+        }
+        svg.icon-sm { width: 15px; height: 15px; }
+        svg.icon-lg { width: 22px; height: 22px; }
+
+        .app-header {
+            position: sticky; top: 0; z-index: 30;
+            background: var(--brand); color: #ffffff; box-shadow: var(--shadow-md);
+        }
+
+        .header-top {
+            max-width: 960px; margin: 0 auto; padding: 10px 14px;
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+        }
+
+        .brand-box { display: flex; align-items: center; gap: 10px; min-width: 0; }
+
+        .brand-logo {
+            width: 38px; height: 38px; background: #ffffff; color: var(--brand);
+            border-radius: var(--radius-md); font-weight: 800; font-size: 20px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .brand-title h1 { font-size: 17px; font-weight: 800; letter-spacing: 0.3px; white-space: nowrap; }
+        .brand-title p { font-size: 11px; color: #ffedd5; white-space: nowrap; }
+
+        .header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+        .btn-scan {
+            background: #ffffff; color: var(--brand-dark); font-weight: 700; font-size: 13px;
+            padding: 8px 12px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);
+        }
+        .btn-scan:hover { background: var(--brand-light); }
+
+        .btn-manage {
+            background: var(--brand-dark); color: #ffffff; font-weight: 700; font-size: 13px;
+            padding: 8px 12px; border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+        .btn-manage:hover { background: var(--brand-darker); }
+
+        .search-bar-wrap {
+            background: var(--brand-dark); padding: 8px 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .search-inner { max-width: 960px; margin: 0 auto; position: relative; display: flex; align-items: center; }
+        .search-icon { position: absolute; left: 12px; color: var(--text-light); pointer-events: none; }
+
+        .search-input {
+            width: 100%; padding: 9px 36px 9px 36px; border-radius: var(--radius-md);
+            border: none; background: #ffffff; color: var(--text-main); font-size: 14px; outline: none;
+        }
+        .search-input:focus { box-shadow: 0 0 0 3px rgba(253, 186, 116, 0.65); }
+
+        .btn-clear-search { position: absolute; right: 8px; color: var(--text-light); padding: 4px; display: none; }
+        .btn-clear-search.visible { display: inline-flex; }
+
+        .category-bar { background: #ffffff; border-bottom: 1px solid var(--border-color); }
+
+        .category-scroll {
+            max-width: 960px; margin: 0 auto; padding: 8px 12px;
+            display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+        }
+        .category-scroll::-webkit-scrollbar { display: none; }
+
+        .cat-pill {
+            padding: 6px 13px; border-radius: var(--radius-full); font-size: 13px;
+            font-weight: 700; white-space: nowrap; background: var(--bg-body);
+            color: var(--text-muted); border: 1px solid transparent;
+        }
+        .cat-pill.active { background: var(--brand); color: #ffffff; box-shadow: var(--shadow-sm); }
+
+        .main-container { max-width: 960px; margin: 0 auto; padding: 12px; }
+
+        .status-strip {
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 12px; color: var(--text-muted); margin-bottom: 10px;
+            padding: 0 2px; gap: 8px; flex-wrap: wrap;
+        }
+
+        .badge-noprice {
+            background: #e2e8f0; color: #334155; padding: 2px 8px;
+            border-radius: var(--radius-full); font-weight: 700; font-size: 11px;
+        }
+
+        .product-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        @media (min-width: 640px) { .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+
+        .product-card {
+            background: var(--bg-card); border-radius: var(--radius-lg); padding: 13px;
+            border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);
+            display: flex; flex-direction: column; justify-content: space-between; gap: 10px;
+        }
+        .product-card.in-cart { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand), var(--shadow-sm); }
+
+        .card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+        .code-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+        .code-badge {
+            background: #1e293b; color: #ffffff;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 12px; font-weight: 700; padding: 2px 7px; border-radius: 6px;
+        }
+        .barcode-tag { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: var(--text-light); }
+
+        .cat-tag {
+            font-size: 11px; font-weight: 700; color: var(--brand-dark);
+            background: var(--brand-light); padding: 2px 8px; border-radius: 6px;
+            white-space: nowrap; max-width: 120px; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        .product-name { font-size: 16px; font-weight: 700; color: var(--text-main); line-height: 1.35; }
+
+        .card-bottom {
+            padding-top: 9px; border-top: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: space-between; gap: 8px;
+        }
+
+        .unit-area { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
+        .unit-pills { display: flex; flex-wrap: wrap; gap: 5px; }
+
+        .unit-btn {
+            padding: 4px 9px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700;
+            background: var(--bg-subtle); color: var(--text-muted); border: 1px solid var(--border-strong);
+        }
+        .unit-btn.active { background: var(--brand); color: #ffffff; border-color: var(--brand); }
+
+        .spec-text { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .spec-text strong { color: var(--text-main); }
+
+        .stepper {
+            display: flex; align-items: center; background: var(--bg-body);
+            padding: 3px; border-radius: var(--radius-md); border: 1px solid var(--border-color); flex-shrink: 0;
+        }
+        .step-btn { width: 34px; height: 34px; border-radius: var(--radius-sm); font-weight: 800; font-size: 16px; }
+        .step-minus { background: #ffffff; color: var(--text-main); box-shadow: var(--shadow-sm); }
+        .step-minus.zero { opacity: 0.4; }
+        .step-plus { background: var(--brand); color: #ffffff; box-shadow: var(--shadow-sm); }
+
+        .step-input {
+            width: 44px; text-align: center; border: none; background: transparent;
+            font-weight: 800; font-size: 15px; color: var(--text-main); outline: none;
+        }
+
+        .empty-state {
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 48px 16px; background: #ffffff;
+            border-radius: var(--radius-lg); border: 1px dashed var(--border-strong);
+        }
+        .empty-state.visible { display: flex; }
+
+        .bottom-bar {
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 30;
+            background: #ffffff; border-top: 1px solid var(--border-color);
+            box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.08); padding: 10px 14px;
+        }
+        .bottom-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .cart-summary-trigger { display: flex; align-items: center; gap: 11px; cursor: pointer; flex: 1; min-width: 0; }
+
+        .cart-icon-box {
+            position: relative; width: 44px; height: 44px; border-radius: var(--radius-md);
+            background: var(--brand-light); color: var(--brand);
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+
+        .cart-badge {
+            position: absolute; top: -5px; right: -5px; background: var(--danger); color: #ffffff;
+            font-size: 11px; font-weight: 800; min-width: 20px; height: 20px; padding: 0 5px;
+            border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center;
+            border: 2px solid #ffffff;
+        }
+
+        .cart-stats-title { font-size: 15px; font-weight: 800; color: var(--text-main); }
+        .cart-stats-title span { color: var(--brand); }
+        .cart-stats-sub { font-size: 11px; color: var(--text-muted); }
+
+        .btn-checkout {
+            background: var(--wa-green); color: #ffffff; font-weight: 700; font-size: 14px;
+            padding: 11px 16px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); white-space: nowrap;
+        }
+        .btn-checkout:hover { background: var(--wa-green-dark); }
+
+        .modal-backdrop {
+            position: fixed; inset: 0; z-index: 50; background: rgba(15, 23, 42, 0.65);
+            display: none; align-items: center; justify-content: center; padding: 12px;
+        }
+        .modal-backdrop.open { display: flex; }
+        .modal-backdrop.bottom-sheet { align-items: flex-end; padding: 0; }
+        @media (min-width: 640px) { .modal-backdrop.bottom-sheet { align-items: center; padding: 16px; } }
+
+        .modal-card {
+            background: #ffffff; width: 100%; max-width: 520px; border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg); overflow: hidden; display: flex; flex-direction: column; max-height: 92vh;
+        }
+        .modal-card.wide { max-width: 780px; }
+        .bottom-sheet .modal-card { border-radius: 20px 20px 0 0; max-height: 92vh; }
+        @media (min-width: 640px) { .bottom-sheet .modal-card { border-radius: var(--radius-lg); } }
+
+        .modal-header {
+            background: #0f172a; color: #ffffff; padding: 14px 16px;
+            display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-shrink: 0;
+        }
+        .modal-header.brand-bg { background: var(--brand); }
+        .modal-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .btn-close { color: rgba(255, 255, 255, 0.85); padding: 4px; border-radius: var(--radius-sm); }
+        .btn-close:hover { color: #ffffff; background: rgba(255, 255, 255, 0.14); }
+        .modal-body { padding: 16px; overflow-y: auto; flex: 1; }
+        .modal-footer { padding: 12px 16px; border-top: 1px solid var(--border-color); background: #ffffff; flex-shrink: 0; }
+
+        .form-group { margin-bottom: 12px; }
+        .form-label { display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px; }
+
+        .form-control {
+            width: 100%; padding: 9px 11px; border: 1px solid var(--border-strong);
+            border-radius: var(--radius-sm); background: var(--bg-input); font-size: 14px; outline: none;
+        }
+        .form-control:focus { border-color: var(--brand); box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.18); }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        @media (min-width: 640px) {
+            .grid-2 { grid-template-columns: repeat(2, 1fr); }
+            .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .btn { padding: 9px 14px; border-radius: var(--radius-sm); font-weight: 700; font-size: 13px; }
+        .btn-primary { background: var(--brand); color: #ffffff; }
+        .btn-primary:hover { background: var(--brand-dark); }
+        .btn-secondary { background: #e2e8f0; color: #1e293b; }
+        .btn-secondary:hover { background: #cbd5e1; }
+        .btn-dark { background: #1e293b; color: #ffffff; }
+        .btn-wa { background: var(--wa-green); color: #ffffff; font-size: 14px; padding: 12px 16px; }
+        .btn-wa:hover { background: var(--wa-green-dark); }
+        .btn-danger-soft { background: var(--danger-light); color: var(--danger); }
+        .btn-warn-soft { background: #fef3c7; color: #92400e; }
+
+        .scanner-box {
+            position: relative; width: 100%; height: 235px; background: #000000;
+            border-radius: var(--radius-md); overflow: hidden; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .scanner-box video { width: 100%; height: 100%; object-fit: cover; }
+
+        .scan-reticle {
+            position: absolute; width: 74%; height: 110px; border: 2px solid #f97316;
+            border-radius: 12px; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45); pointer-events: none;
+        }
+        .scan-line {
+            position: absolute; left: 6%; right: 6%; top: 50%; height: 2px;
+            background: #ef4444; box-shadow: 0 0 8px #ef4444;
+        }
+
+        .scanner-hint {
+            margin-top: 8px; padding: 8px 10px; border-radius: var(--radius-sm);
+            background: #ffffff; border: 1px solid var(--border-color);
+            font-size: 12px; color: var(--text-muted); line-height: 1.5;
+        }
+
+        .tabs-bar {
+            display: flex; background: var(--bg-body); padding: 8px 12px 0;
+            gap: 6px; border-bottom: 1px solid var(--border-color); overflow-x: auto; flex-shrink: 0;
+        }
+
+        .tab-btn {
+            padding: 9px 14px; border-radius: 10px 10px 0 0; font-size: 13px;
+            font-weight: 700; color: var(--text-muted); white-space: nowrap;
+            border: 1px solid transparent; border-bottom: none;
+        }
+        .tab-btn.active { background: #ffffff; color: var(--brand); border-color: var(--border-color); }
+
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+
+        .unit-builder-box {
+            background: #ffffff; border: 1px solid var(--brand-border);
+            border-radius: var(--radius-md); padding: 10px; margin-bottom: 12px;
+        }
+        .unit-row { display: grid; grid-template-columns: 108px 1fr 36px; gap: 6px; align-items: center; margin-top: 8px; }
+
+        .list-card {
+            background: #ffffff; border: 1px solid var(--border-color);
+            border-radius: var(--radius-md); padding: 10px 12px; margin-bottom: 8px;
+        }
+        .flex-between { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+        .wa-preview-box {
+            white-space: pre-wrap; word-break: break-word; font-size: 13px; line-height: 1.55;
+            color: var(--text-main); background: #ffffff; border: 1px solid var(--border-strong);
+            border-radius: var(--radius-sm); padding: 10px 12px; font-family: inherit;
+        }
+
+        .toast {
+            position: fixed; top: 72px; left: 50%; transform: translateX(-50%) translateY(-10px);
+            background: #0f172a; color: #ffffff; padding: 9px 18px; border-radius: var(--radius-full);
+            font-size: 13px; font-weight: 600; box-shadow: var(--shadow-lg); z-index: 90;
+            opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease;
+            white-space: nowrap; max-width: 90vw; overflow: hidden; text-overflow: ellipsis;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.error { background: var(--danger); }
+    </style>
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="header-top">
+            <div class="brand-box">
+                <div class="brand-logo">合</div>
+                <div class="brand-title">
+                    <h1>合香園 落單系統</h1>
+                    <p>無價錢版 · 快速點貨落單</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button type="button" class="btn-scan" onclick="openScannerModal('SEARCH')">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="8" x2="7" y2="16"/><line x1="11" y1="8" x2="11" y2="16"/><line x1="15" y1="8" x2="15" y2="16"/><line x1="18" y1="8" x2="18" y2="16"/></svg>
+                    <span>掃碼</span>
+                </button>
+                <button type="button" class="btn-manage" onclick="openManageModal()">
+                    <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+                    <span>管理設定</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="search-bar-wrap">
+            <div class="search-inner">
+                <svg class="icon search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="searchInput" class="search-input" oninput="handleSearch()" placeholder="搜尋貨品名稱、編號 (如 010002) 或條碼...">
+                <button type="button" id="clearSearchBtn" class="btn-clear-search" onclick="clearSearch()" title="清除搜尋">
+                    <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <nav class="category-bar">
+            <div id="categoryTabs" class="category-scroll"></div>
+        </nav>
+    </header>
+
+    <main class="main-container">
+        <div class="status-strip">
+            <span id="productCountText">載入中...</span>
+            <span class="badge-noprice">無價錢版 · 自由增刪貨品/種類/單位</span>
+        </div>
+
+        <div id="productGrid" class="product-grid"></div>
+
+        <div id="emptyState" class="empty-state">
+            <svg class="icon" style="width:42px;height:42px;color:#94a3b8;margin-bottom:10px;" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <h3 style="font-size:16px;font-weight:700;margin-bottom:4px;">找不到相關貨品</h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;">請嘗試其他關鍵字、商品編號，或立即新增此貨品。</p>
+            <button type="button" class="btn btn-primary" onclick="openProductFormWithQuery()">+ 新增此貨品</button>
+        </div>
+    </main>
+
+    <div class="bottom-bar">
+        <div class="bottom-inner">
+            <div class="cart-summary-trigger" onclick="openCartModal()">
+                <div class="cart-icon-box">
+                    <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                    <span id="cartBadgeCount" class="cart-badge">0</span>
+                </div>
+                <div>
+                    <div class="cart-stats-title">
+                        已選 <span id="cartTotalTypes">0</span> 款 / 共 <span id="cartTotalQty">0</span> 件
+                    </div>
+                    <div class="cart-stats-sub">點擊檢視明細、切換單位及連接 WhatsApp 落單</div>
+                </div>
+            </div>
+            <button type="button" class="btn-checkout" onclick="openCartModal()">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                <span>檢視 / 落單</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="scannerModal" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <svg class="icon" style="color:#fb923c;" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    <span>鏡頭掃描商品條碼 (Barcode)</span>
+                </div>
+                <button type="button" class="btn-close" onclick="closeScannerModal()">
+                    <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" style="background:var(--bg-subtle);">
+                <div class="scanner-box">
+                    <video id="scannerVideo" playsinline muted></video>
+                    <div class="scan-reticle"><div class="scan-line"></div></div>
+                </div>
+                <div id="scannerStatus" class="scanner-hint">正在啟動鏡頭...</div>
+
+                <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border-color);">
+                    <label class="form-label">手動輸入條碼 / 編號（或使用外接條碼槍掃入後按 Enter）：</label>
+                    <form onsubmit="handleManualBarcodeSubmit(event)" style="display:flex;gap:8px;">
+                        <input type="text" id="manualBarcodeInput" class="form-control" placeholder="輸入條碼或商品編號 (如 010002)...">
+                        <button type="submit" class="btn btn-primary" style="white-space:nowrap;">尋找</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="quickAddModal" class="modal-backdrop">
+        <div class="modal-card" style="max-width:400px;">
+            <div class="modal-header brand-bg">
+                <div class="modal-title">
+                    <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>找到商品 · 加入落單</span>
+                </div>
+                <button type="button" class="btn-close" onclick="closeQuickAddModal()">
+                    <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div id="quickAddContent" class="modal-body"></div>
+        </div>
+    </div>
+
+    <div id="cartModal" class="modal-backdrop bottom-sheet">
+        <div class="modal-card wide">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <svg class="icon" style="color:#fb923c;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    <span>落單明細清單</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <button type="button" class="btn btn-danger-soft" style="padding:5px 10px;font-size:12px;" onclick="confirmClearCart()">清空</button>
+                    <button type="button" class="btn-close" onclick="closeCartModal()">
+                        <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <div style="background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:11px 12px;margin-bottom:12px;">
+                    <label class="form-label">接收落單 WhatsApp 號碼（可留空，留空將開啟一般傳送視窗）</label>
+                    <input type="tel" id="targetWhatsapp" class="form-control" oninput="saveTargetWhatsapp()" placeholder="例如：85298765432（連國碼，不需加 + 號）">
+                </div>
+
+                <div class="flex-between" style="margin-bottom:8px;">
+                    <span style="font-size:13px;font-weight:700;">已選貨品項目</span>
+                    <span id="modalCartSummary" style="font-size:12px;font-weight:700;color:var(--brand);">0 款 / 共 0 件</span>
+                </div>
+                <div id="cartItemsContainer"></div>
+
+                <div style="background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px;margin-top:14px;">
+                    <div style="font-size:13px;font-weight:700;color:var(--text-main);margin-bottom:8px;">WhatsApp 傳送內容預覽</div>
+                    <pre id="whatsappPreviewBox" class="wa-preview-box"></pre>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div style="display:grid;grid-template-columns:1fr 2fr;gap:8px;">
+                    <button type="button" class="btn btn-secondary" onclick="copyOrderText()">複製落單文字</button>
+                    <button type="button" class="btn btn-wa" onclick="sendWhatsAppOrder()">連接 WhatsApp 發送落單</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="manageModal" class="modal-backdrop bottom-sheet">
+        <div class="modal-card wide" style="height:90vh;">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <svg class="icon" style="color:#fb923c;" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    <span>貨品、種類及單位管理</span>
+                </div>
+                <button type="button" class="btn-close" onclick="closeManageModal()">
+                    <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+
+            <div class="tabs-bar">
+                <button type="button" id="tabBtnProducts" class="tab-btn active" onclick="switchManageTab('products')">貨品管理</button>
+                <button type="button" id="tabBtnCategories" class="tab-btn" onclick="switchManageTab('categories')">種類管理</button>
+                <button type="button" id="tabBtnUnits" class="tab-btn" onclick="switchManageTab('units')">單位管理</button>
+                <button type="button" id="tabBtnBackup" class="tab-btn" onclick="switchManageTab('backup')">備份/重設</button>
+            </div>
+
+            <div class="modal-body" id="manageScrollBody">
+                <div id="manageTabProducts" class="tab-pane active">
+                    <div style="background:var(--brand-light);border:1px solid var(--brand-border);border-radius:var(--radius-md);padding:12px;margin-bottom:14px;">
+                        <div class="flex-between" style="margin-bottom:10px;">
+                            <span id="productFormTitle" style="font-size:14px;font-weight:800;color:var(--brand-darker);">+ 新增貨品</span>
+                            <button type="button" id="cancelEditProductBtn" style="display:none;font-size:12px;text-decoration:underline;color:var(--text-muted);" onclick="resetProductForm()">取消編輯</button>
+                        </div>
+
+                        <form id="productForm" onsubmit="saveProductForm(event)">
+                            <input type="hidden" id="editProductId">
+                            <div class="grid-3 form-group">
+                                <div>
+                                    <label class="form-label">商品編號 *</label>
+                                    <input type="text" id="prodCode" class="form-control" required placeholder="如 010002">
+                                </div>
+                                <div>
+                                    <label class="form-label">條碼 Barcode (選填)</label>
+                                    <div style="display:flex;gap:5px;">
+                                        <input type="text" id="prodBarcode" class="form-control" placeholder="掃描或輸入條碼">
+                                        <button type="button" class="btn btn-dark" style="padding:0 10px;" onclick="openScannerModal('FORM_FIELD')" title="掃碼填入">
+                                            <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="4" y1="6" x2="4" y2="18"/><line x1="9" y1="6" x2="9" y2="18"/><line x1="14" y1="6" x2="14" y2="18"/><line x1="20" y1="6" x2="20" y2="18"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="form-label">所屬種類 *</label>
+                                    <select id="prodCategory" class="form-control" required></select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">商品名稱 *</label>
+                                <input type="text" id="prodName" class="form-control" required placeholder="例如：果超軟糖">
+                            </div>
+
+                            <div class="unit-builder-box">
+                                <div class="flex-between" style="flex-wrap:wrap;">
+                                    <span style="font-size:12px;font-weight:700;color:#334155;">可選單位及包裝規格設定 *</span>
+                                    <div style="display:flex;gap:6px;">
+                                        <button type="button" class="btn btn-secondary" style="padding:4px 8px;font-size:11px;" onclick="quickAddUnitPrompt()">+ 自訂新單位</button>
+                                        <button type="button" class="btn btn-warn-soft" style="padding:4px 8px;font-size:11px;" onclick="addProductUnitRow()">+ 增加單位選項</button>
+                                    </div>
+                                </div>
+                                <div id="productUnitRows"></div>
+                            </div>
+
+                            <div style="display:flex;justify-content:flex-end;">
+                                <button type="submit" class="btn btn-primary">儲存貨品資料</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="flex-between" style="margin-bottom:8px;flex-wrap:wrap;">
+                        <span style="font-size:13px;font-weight:700;">現有貨品列表 (<span id="manageProdCount">0</span>)</span>
+                        <input type="text" id="manageSearchInput" class="form-control" style="max-width:240px;padding:6px 10px;font-size:13px;" oninput="renderManageProductList()" placeholder="篩選編號或名稱...">
+                    </div>
+                    <div id="manageProductList"></div>
+                </div>
+
+                <div id="manageTabCategories" class="tab-pane">
+                    <div class="list-card" style="background:var(--bg-subtle);margin-bottom:14px;">
+                        <label class="form-label">新增貨品種類</label>
+                        <form onsubmit="addCategory(event)" style="display:flex;gap:8px;">
+                            <input type="text" id="newCategoryName" class="form-control" required placeholder="輸入新種類名稱（例如：節日禮盒）">
+                            <button type="submit" class="btn btn-primary" style="white-space:nowrap;">+ 新增</button>
+                        </form>
+                    </div>
+                    <div style="font-size:13px;font-weight:700;margin-bottom:8px;">現有種類列表 (修改名稱後自動儲存)</div>
+                    <div id="manageCategoryList"></div>
+                </div>
+
+                <div id="manageTabUnits" class="tab-pane">
+                    <div class="list-card" style="background:var(--bg-subtle);margin-bottom:14px;">
+                        <label class="form-label">新增點貨單位（如：打、條、桶、支、片、件、板、斤）</label>
+                        <form onsubmit="addUnit(event)" style="display:flex;gap:8px;">
+                            <input type="text" id="newUnitName" class="form-control" required placeholder="輸入新單位名稱...">
+                            <button type="submit" class="btn btn-primary" style="white-space:nowrap;">+ 新增單位</button>
+                        </form>
+                    </div>
+                    <div style="font-size:13px;font-weight:700;margin-bottom:4px;">現有單位列表 (<span id="manageUnitCount">0</span>)</div>
+                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">修改名稱後會自動同步更新所有相關貨品及購物車項目。</p>
+                    <div id="manageUnitList" class="grid-2"></div>
+                </div>
+
+                <div id="manageTabBackup" class="tab-pane">
+                    <div class="list-card" style="margin-bottom:12px;">
+                        <h4 style="font-size:15px;font-weight:700;margin-bottom:6px;">匯出 / 匯入貨單備份</h4>
+                        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">所有修改都會自動儲存在此裝置瀏覽器中。您亦可匯出 JSON 檔案傳送給同事匯入。</p>
+                        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                            <button type="button" class="btn btn-dark" onclick="exportDataJSON()">匯出備份檔 (.json)</button>
+                            <label class="btn btn-primary" style="cursor:pointer;">
+                                <span>匯入備份檔 (.json)</span>
+                                <input type="file" accept=".json" onchange="importDataJSON(event)" style="display:none;">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="list-card" style="background:var(--danger-light);border-color:#fecaca;">
+                        <h4 style="font-size:15px;font-weight:700;color:var(--danger);margin-bottom:6px;">重設為預設合香園貨單</h4>
+                        <p style="font-size:12px;color:#991b1b;margin-bottom:12px;">此操作將會還原為系統內建的「合香園」初始商品目錄、種類與單位。</p>
+                        <button type="button" class="btn" style="background:var(--danger);color:#fff;" onclick="confirmResetDefaults()">立即重設預設資料</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="customDialog" class="modal-backdrop" style="z-index:70;">
+        <div class="modal-card" style="max-width:380px;">
+            <div class="modal-body">
+                <h3 id="dialogTitle" style="font-size:16px;font-weight:800;margin-bottom:8px;">確認操作</h3>
+                <p id="dialogMessage" style="font-size:13px;color:var(--text-muted);white-space:pre-line;margin-bottom:12px;"></p>
+                <div id="dialogInputWrap" style="display:none;margin-bottom:12px;">
+                    <input type="text" id="dialogInputField" class="form-control" placeholder="請輸入...">
+                </div>
+                <div style="display:flex;justify-content:flex-end;gap:8px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeCustomDialog()">取消</button>
+                    <button type="button" id="dialogConfirmBtn" class="btn btn-primary">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">操作成功</div>
+
+    <script>
+        const DEFAULT_UNITS = ['箱', '盒', '包', '袋', '扎', '罐', '樽', '筒', '排', '個', '條', '支', '打', '片', '件'];
+
+        const DEFAULT_CATEGORIES = [
+            { id: 'cat_candy', name: '糖果軟糖' },
+            { id: 'cat_toy', name: '玩具糖果' },
+            { id: 'cat_noodle', name: '即食麵/杯麵' },
+            { id: 'cat_gum', name: '香口膠/薄荷糖' },
+            { id: 'cat_jelly', name: '啫喱/布丁/冰條' },
+            { id: 'cat_drink', name: '飲品/涼茶' },
+            { id: 'cat_daily', name: '電池/日用品' },
+            { id: 'cat_chips', name: '薯片/脆口零食' },
+            { id: 'cat_choco', name: '朱古力' },
+            { id: 'cat_biscuit', name: '餅乾/威化/蛋糕' },
+            { id: 'cat_meat', name: '辣條/肉類/海味' },
+            { id: 'cat_nut', name: '花生/紫菜' },
+            { id: 'cat_plum', name: '涼果/話梅' }
+        ];
+
+        const DEFAULT_PRODUCTS = [
+            { id: 'p_010003A', code: '010003-A', barcode: '010003-A', categoryId: 'cat_candy', name: '蜂蜜檸檬茶味糖(樽裝)', units: [{ unit: '樽', spec: '175g' }, { unit: '箱', spec: '175gX24樽' }] },
+            { id: 'p_010002', code: '010002', barcode: '010002', categoryId: 'cat_candy', name: '果超軟糖', units: [{ unit: '包', spec: '1X500g' }, { unit: '箱', spec: '1X32包' }] },
+            { id: 'p_010003', code: '010003', barcode: '010003', categoryId: 'cat_candy', name: '蜂蜜檸檬茶味糖(散裝)', units: [{ unit: '袋', spec: '1kg' }, { unit: '箱', spec: '1X10包X1kg' }] },
+            { id: 'p_010004', code: '010004', barcode: '010004', categoryId: 'cat_candy', name: '彩虹糖(原味)', units: [{ unit: '盒', spec: '45gX20包' }] },
+            { id: 'p_010004A', code: '010004-A', barcode: '010004-A', categoryId: 'cat_candy', name: '彩虹糖(酸砂)', units: [{ unit: '盒', spec: '45gX20包' }] },
+            { id: 'p_010005A', code: '010005-A', barcode: '010005-A', categoryId: 'cat_candy', name: '明治跳跳糖(提子味)', units: [{ unit: '盒', spec: '5gX20小包' }] },
+            { id: 'p_010005B', code: '010005-B', barcode: '010005-B', categoryId: 'cat_candy', name: '明治跳跳糖(可樂味)', units: [{ unit: '盒', spec: '5gX20小包' }] },
+            { id: 'p_010005C', code: '010005-C', barcode: '010005-C', categoryId: 'cat_candy', name: '明治跳跳糖(梳打味)', units: [{ unit: '盒', spec: '5gX20小包' }] },
+            { id: 'p_010006', code: '010006', barcode: '010006', categoryId: 'cat_candy', name: '泰國沙沙汽水糖', units: [{ unit: '袋', spec: '1.8kg' }, { unit: '箱', spec: '1.8kgX12袋' }] },
+            { id: 'p_010007', code: '010007', barcode: '010007', categoryId: 'cat_candy', name: '番石榴糖', units: [{ unit: '包', spec: '1X400g' }, { unit: '箱', spec: '1X24包X400g' }] },
+            { id: 'p_010011', code: '010011', barcode: '010011', categoryId: 'cat_candy', name: '咸檸檬糖', units: [{ unit: '包', spec: '1包' }, { unit: '箱', spec: '1X20包' }] },
+            { id: 'p_012000', code: '012000', barcode: '012000', categoryId: 'cat_candy', name: '益力多軟糖', units: [{ unit: '盒', spec: '1X8包' }, { unit: '箱', spec: '8包X5盒' }] },
+            { id: 'p_012001', code: '012001', barcode: '012001', categoryId: 'cat_candy', name: '利賓納包裝軟糖(黑加倫子)', units: [{ unit: '盒', spec: '40gX12包' }, { unit: '箱', spec: '40gX12包X24盒' }] },
+            { id: 'p_0124001', code: '0124001', barcode: '0124001', categoryId: 'cat_candy', name: 'YUPI 108g迷你漢堡橡皮糖', units: [{ unit: '包', spec: '108g' }, { unit: '箱', spec: '108gX24包' }] },
+            { id: 'p_0128001A', code: '0128001-A', barcode: '0128001-A', categoryId: 'cat_candy', name: '旺仔QQ糖(提子)', units: [{ unit: '袋', spec: '1X4條X5小包' }, { unit: '箱', spec: '6袋X4條X5小包' }] },
+            { id: 'p_027001', code: '027001', barcode: '027001', categoryId: 'cat_candy', name: '珍寶珠(100支)', units: [{ unit: '罐', spec: '100支' }, { unit: '箱', spec: '6罐X100支' }] },
+            { id: 'p_029031B', code: '029031B', barcode: '029031B', categoryId: 'cat_candy', name: '白兔奶糖(單包裝)', units: [{ unit: '盒', spec: '180gX15包' }, { unit: '箱', spec: '180gX60包' }] },
+            { id: 'p_011008A', code: '011008-A', barcode: '011008-A', categoryId: 'cat_toy', name: '哨子咪高峰', units: [{ unit: '盒', spec: '1X20支' }] },
+            { id: 'p_011011', code: '011011', barcode: '011011', categoryId: 'cat_toy', name: '糖果販賣機', units: [{ unit: '盒', spec: '1X12' }, { unit: '箱', spec: '1X6盒' }] },
+            { id: 'p_011012', code: '011012', barcode: '011012', categoryId: 'cat_toy', name: '扭糖機', units: [{ unit: '盒', spec: '12個' }, { unit: '箱', spec: '12個X12盒' }] },
+            { id: 'p_011015', code: '011015', barcode: '011015', categoryId: 'cat_toy', name: '介指糖(什味)', units: [{ unit: '盒', spec: '1X24個' }, { unit: '箱', spec: '1X12盒' }] },
+            { id: 'p_011020', code: '011020', barcode: '011020', categoryId: 'cat_toy', name: '小黃鴨飲水機', units: [{ unit: '盒', spec: '8gX9個' }, { unit: '箱', spec: '9個X9盒' }] },
+            { id: 'p_30004B', code: '30004-B', barcode: '30004-B', categoryId: 'cat_toy', name: '恐龍蛋', units: [{ unit: '條', spec: '1x8個' }, { unit: '箱', spec: '8個x4條' }] },
+            { id: 'p_100001', code: '100001', barcode: '100001', categoryId: 'cat_noodle', name: 'Indo mie 印尼麵', units: [{ unit: '箱', spec: '5包裝X8袋' }] },
+            { id: 'p_100015', code: '100015', barcode: '100015', categoryId: 'cat_noodle', name: '辛辣麵(5包裝)', units: [{ unit: '箱', spec: '1X40包' }] },
+            { id: 'p_1001001', code: '1001001', barcode: '1001001', categoryId: 'cat_noodle', name: '福字伊麵', units: [{ unit: '盒', spec: '1X30包' }, { unit: '扎', spec: '3盒X30包' }] },
+            { id: 'p_1002001A', code: '1002001-A', barcode: '1002001-A', categoryId: 'cat_noodle', name: '出前一丁公仔麵(麻油)', units: [{ unit: '盒', spec: '1X30包' }, { unit: '扎', spec: '3盒X30包' }] },
+            { id: 'p_1002001B', code: '1002001-B', barcode: '1002001-B', categoryId: 'cat_noodle', name: '出前一丁公仔麵(雞蓉)', units: [{ unit: '盒', spec: '1X30包' }, { unit: '扎', spec: '3盒X30包' }] },
+            { id: 'p_1003001A', code: '1003001-A', barcode: '1003001-A', categoryId: 'cat_noodle', name: '合味道大杯麵(海鮮)', units: [{ unit: '箱', spec: '99gX12杯' }, { unit: '扎', spec: '99gX24杯' }] },
+            { id: 'p_1003002A', code: '1003002-A', barcode: '1003002-A', categoryId: 'cat_noodle', name: '合味道75g杯麵(海鮮)', units: [{ unit: '箱', spec: '1X24杯' }] },
+            { id: 'p_1006001A', code: '1006001-A', barcode: '1006001-A', categoryId: 'cat_noodle', name: '媽咪麵(單包裝)', units: [{ unit: '盒', spec: '60gX40包' }, { unit: '扎', spec: '60gX40包X3箱' }] },
+            { id: 'p_110001A', code: '110001-A', barcode: '110001-A', categoryId: 'cat_gum', name: '易極(黑加倫子)', units: [{ unit: '盒', spec: '1X8小盒' }] },
+            { id: 'p_110002', code: '110002', barcode: '110002', categoryId: 'cat_gum', name: '綠箭(15片裝)', units: [{ unit: '盒', spec: '15片X12條' }, { unit: '箱', spec: '15片X12條X16盒' }] },
+            { id: 'p_110005A', code: '110005-A', barcode: '110005-A', categoryId: 'cat_gum', name: '包裝益達(綠薄荷)', units: [{ unit: '包', spec: '20粒' }, { unit: '盒', spec: '20粒X30包' }] },
+            { id: 'p_023020A', code: '023020-A', barcode: '023020-A', categoryId: 'cat_gum', name: '龍角散潤喉糖(白色原味)', units: [{ unit: '盒', spec: '1X10條' }, { unit: '箱', spec: '10條X12盒' }] },
+            { id: 'p_120006', code: '120006', barcode: '120006', categoryId: 'cat_jelly', name: '旺旺碎冰冰(可樂)', units: [{ unit: '袋', spec: '1袋X78mlX20支' }, { unit: '箱', spec: '1箱X4袋' }] },
+            { id: 'p_120013A', code: '120013-A', barcode: '120013-A', categoryId: 'cat_jelly', name: '喜之朗果爽(荔枝)', units: [{ unit: '箱', spec: '1X24杯' }] },
+            { id: 'p_120019A', code: '120019-A', barcode: '120019-A', categoryId: 'cat_jelly', name: '12粒雙色蒟蒻(鹽檸檬+鹽西瓜)', units: [{ unit: '包', spec: '20gX12粒' }, { unit: '箱', spec: '20gX12粒X12包' }] },
+            { id: 'p_130001', code: '130001', barcode: '130001', categoryId: 'cat_drink', name: '細津路', units: [{ unit: '箱', spec: '24樽X500ml' }] },
+            { id: 'p_130005', code: '130005', barcode: '130005', categoryId: 'cat_drink', name: '寶礦力水得支裝', units: [{ unit: '箱', spec: '580mlX24樽' }] },
+            { id: 'p_130006', code: '130006', barcode: '130006', categoryId: 'cat_drink', name: '康師傅冰紅茶', units: [{ unit: '箱', spec: '24樽X600ml' }] },
+            { id: 'p_130009', code: '130009', barcode: '130009', categoryId: 'cat_drink', name: '可口可樂', units: [{ unit: '箱', spec: '330mlX24罐' }] },
+            { id: 'p_130011A', code: '130011-A', barcode: '130011-A', categoryId: 'cat_drink', name: '泰國紅牛(罐裝)', units: [{ unit: '箱', spec: '250mlX24罐' }] },
+            { id: 'p_130025', code: '130025', barcode: '130025', categoryId: 'cat_drink', name: '道地蜂蜜綠茶', units: [{ unit: '箱', spec: '24樽X500ml' }] },
+            { id: 'p_130035', code: '130035', barcode: '130035', categoryId: 'cat_drink', name: '旺仔牛奶', units: [{ unit: '箱', spec: '125mlX9排X4盒' }] },
+            { id: 'p_131002', code: '131002', barcode: '131002', categoryId: 'cat_drink', name: '鴻福堂 咸柑桔', units: [{ unit: '箱', spec: '24樽X500ml' }] },
+            { id: 'p_140000A', code: '140000-A', barcode: '140000-A', categoryId: 'cat_daily', name: '勁量3A電池', units: [{ unit: '盒', spec: '2粒X12排' }] },
+            { id: 'p_140000B', code: '140000-B', barcode: '140000-B', categoryId: 'cat_daily', name: '勁量2A電池', units: [{ unit: '盒', spec: '2粒X12排' }] },
+            { id: 'p_140007', code: '140007', barcode: '140007', categoryId: 'cat_daily', name: '金邊老虎啤牌', units: [{ unit: '盒', spec: '1X12副' }] },
+            { id: 'p_22001', code: '22001', barcode: '22001', categoryId: 'cat_chips', name: '時興隆 細芝士圈', units: [{ unit: '袋', spec: '1袋X30gX30包' }, { unit: '箱', spec: '10袋X30gX30包' }] },
+            { id: 'p_24001', code: '24001', barcode: '24001', categoryId: 'cat_chips', name: '珍珍 18g細牛仔片', units: [{ unit: '箱', spec: '1箱X18gX50包' }] },
+            { id: 'p_2612A', code: '2612-A', barcode: '2612-A', categoryId: 'cat_chips', name: '卡樂B 80g粟一燒(燒烤味)', units: [{ unit: '箱', spec: '80gX20包' }] },
+            { id: 'p_2622A', code: '2622-A', barcode: '2622-A', categoryId: 'cat_chips', name: '卡樂B 40g蝦條(原味)', units: [{ unit: '箱', spec: '40gX30包' }] },
+            { id: 'p_2642A', code: '2642-A', barcode: '2642-A', categoryId: 'cat_chips', name: '卡樂B 55g薯片(燒烤味)', units: [{ unit: '箱', spec: '55gX24包' }] },
+            { id: 'p_2642B', code: '2642-B', barcode: '2642-B', categoryId: 'cat_chips', name: '卡樂B 55g薯片(熱浪香辣)', units: [{ unit: '箱', spec: '55gX24包' }] },
+            { id: 'p_33000A', code: '33000-A', barcode: '33000-A', categoryId: 'cat_choco', name: 'T2健達繽紛樂(原味)', units: [{ unit: '盒', spec: '43gX30包' }, { unit: '箱', spec: '43gX30包X4盒' }] },
+            { id: 'p_35004', code: '35004', barcode: '35004', categoryId: 'cat_choco', name: 'MARS 士力架', units: [{ unit: '盒', spec: '1盒X24條' }] },
+            { id: 'p_35006A', code: '35006-A', barcode: '35006-A', categoryId: 'cat_choco', name: '包裝麥堤莎(原味)', units: [{ unit: '盒', spec: '1盒X20包' }] },
+            { id: 'p_36001A', code: '36001-A', barcode: '36001-A', categoryId: 'cat_choco', name: '明治紅草莓朱古力', units: [{ unit: '盒', spec: '46gX10小盒' }, { unit: '箱', spec: '46gX10小盒X12盒' }] },
+            { id: 'p_39001', code: '39001', barcode: '39001', categoryId: 'cat_choco', name: 'T3 金莎朱古力', units: [{ unit: '盒', spec: '16條X3粒' }, { unit: '箱', spec: '6盒X16條X3粒' }] },
+            { id: 'p_41006A', code: '41006-A', barcode: '41006-A', categoryId: 'cat_biscuit', name: '嘉頓時時食夾心餅(芝士)', units: [{ unit: '盒', spec: '1盒X24包' }] },
+            { id: 'p_411003A', code: '411003-A', barcode: '411003-A', categoryId: 'cat_biscuit', name: '四洲甘大滋盒裝百力滋(原味)', units: [{ unit: '盒', spec: '10小盒X40g' }, { unit: '箱', spec: '24盒X10小盒X40g' }] },
+            { id: 'p_44001A', code: '44001-A', barcode: '44001-A', categoryId: 'cat_biscuit', name: '固力果 百奇百力滋', units: [{ unit: '盒', spec: '45gX10小盒' }, { unit: '箱', spec: '45gX10小盒X12盒' }] },
+            { id: 'p_49001', code: '49001', barcode: '49001', categoryId: 'cat_biscuit', name: '奧利奧夾心餅(筒裝)', units: [{ unit: '箱', spec: '1箱X24包' }] },
+            { id: 'p_61001', code: '61001', barcode: '61001', categoryId: 'cat_meat', name: '大洋腸(細包)', units: [{ unit: '盒', spec: '22gX30條' }, { unit: '箱', spec: '1X16盒' }] },
+            { id: 'p_62027E', code: '62027-E', barcode: '62027-E', categoryId: 'cat_meat', name: '衛龍大魔芋爽(紅)', units: [{ unit: '包', spec: '50g' }, { unit: '箱', spec: '50gX60包' }] },
+            { id: 'p_650004', code: '650004', barcode: '650004', categoryId: 'cat_meat', name: '金龜嘜 13g 魷魚絲', units: [{ unit: '盒', spec: '1盒X13gX36包' }] },
+            { id: 'p_63005', code: '63005', barcode: '63005', categoryId: 'cat_nut', name: '山東 454g青島烤花生', units: [{ unit: '包', spec: '1包X454g' }, { unit: '箱', spec: '1箱X20包X454g' }] },
+            { id: 'p_6412A', code: '6412-A', barcode: '6412-A', categoryId: 'cat_nut', name: '小老板卷裝紫菜(綠色原味)', units: [{ unit: '盒', spec: '1盒X9條' }, { unit: '箱', spec: '1箱X12盒X9條' }] },
+            { id: 'p_90002A', code: '90002-A', barcode: '90002-A', categoryId: 'cat_plum', name: '時興隆金梅片(原味)', units: [{ unit: '盒', spec: '55gX12瓶' }, { unit: '箱', spec: '55gX12瓶X12盒' }] },
+            { id: 'p_90007', code: '90007', barcode: '90007', categoryId: 'cat_plum', name: '九製陳皮', units: [{ unit: '袋', spec: '1袋X20包X30g' }, { unit: '箱', spec: '20包X30g' }] },
+            { id: 'p_90019', code: '90019', barcode: '90019', categoryId: 'cat_plum', name: '向陽山楂餅', units: [{ unit: '包', spec: '1包X10個' }, { unit: '箱', spec: '1箱X120包' }] }
+        ];
+
+        const STORAGE_KEYS = {
+            UNITS: 'hhy_noprice_units_v3',
+            CATEGORIES: 'hhy_noprice_categories_v3',
+            PRODUCTS: 'hhy_noprice_products_v3',
+            CART: 'hhy_noprice_cart_v3',
+            WA_PHONE: 'hhy_noprice_wa_phone_v3'
+        };
+
+        const memoryFallback = {};
+        function readStorage(key) {
+            try { return window.localStorage.getItem(key); } catch (err) { return memoryFallback[key] || null; }
+        }
+        function writeStorage(key, value) {
+            try { window.localStorage.setItem(key, value); } catch (err) { memoryFallback[key] = value; }
+        }
+
+        let units = [];
+        let categories = [];
+        let products = [];
+        let cart = [];
+        let targetWhatsapp = '';
+        let selectedCategory = 'ALL';
+        let searchQuery = '';
+        let selectedUnitsMap = {};
+
+        let mediaStream = null;
+        let scanLoopId = null;
+        let scanModeTarget = 'SEARCH';
+        let scanHandled = false;
+
+        function getProductUnits(prod) {
+            if (Array.isArray(prod.units) && prod.units.length > 0) {
+                return prod.units.filter(u => u && typeof u.unit === 'string' && u.unit.trim() !== '');
+            }
+            return [{ unit: '箱', spec: '' }];
+        }
+
+        function normalizeProduct(prod) {
+            const uList = getProductUnits(prod);
+            return {
+                id: prod.id || ('p_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6)),
+                code: String(prod.code || '').trim(),
+                barcode: String(prod.barcode || prod.code || '').trim(),
+                categoryId: prod.categoryId || (categories[0] ? categories[0].id : 'cat_candy'),
+                name: String(prod.name || '').trim(),
+                units: uList.length > 0 ? uList : [{ unit: '箱', spec: '' }]
+            };
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            document.getElementById('targetWhatsapp').value = targetWhatsapp;
+            renderCategoryTabs();
+            renderProducts();
+            updateCartUI();
+        });
+
+        function loadState() {
+            try {
+                const rawUnits = readStorage(STORAGE_KEYS.UNITS);
+                const rawCats = readStorage(STORAGE_KEYS.CATEGORIES);
+                const rawProds = readStorage(STORAGE_KEYS.PRODUCTS);
+                const rawCart = readStorage(STORAGE_KEYS.CART);
+                const rawWa = readStorage(STORAGE_KEYS.WA_PHONE);
+
+                units = rawUnits ? JSON.parse(rawUnits) : [...DEFAULT_UNITS];
+                categories = rawCats ? JSON.parse(rawCats) : JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
+                const parsedProds = rawProds ? JSON.parse(rawProds) : JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+                products = parsedProds.map(normalizeProduct);
+                cart = rawCart ? JSON.parse(rawCart) : [];
+                targetWhatsapp = rawWa || '';
+
+                let unitUpdated = false;
+                products.forEach(p => {
+                    getProductUnits(p).forEach(uObj => {
+                        if (uObj.unit && !units.includes(uObj.unit)) {
+                            units.push(uObj.unit);
+                            unitUpdated = true;
+                        }
+                    });
+                });
+                if (unitUpdated) saveUnits();
+            } catch (e) {
+                units = [...DEFAULT_UNITS];
+                categories = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
+                products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS)).map(normalizeProduct);
+                cart = [];
+                targetWhatsapp = '';
+            }
+        }
+
+        function saveUnits() { writeStorage(STORAGE_KEYS.UNITS, JSON.stringify(units)); }
+        function saveCategories() { writeStorage(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories)); }
+        function saveProducts() { writeStorage(STORAGE_KEYS.PRODUCTS, JSON.stringify(products)); }
+        function saveCart() {
+            writeStorage(STORAGE_KEYS.CART, JSON.stringify(cart));
+            updateCartUI();
+        }
+        function saveTargetWhatsapp() {
+            targetWhatsapp = document.getElementById('targetWhatsapp').value.trim();
+            writeStorage(STORAGE_KEYS.WA_PHONE, targetWhatsapp);
+        }
+
+        function renderCategoryTabs() {
+            const wrap = document.getElementById('categoryTabs');
+            let html = `<button type="button" class="cat-pill ${selectedCategory === 'ALL' ? 'active' : ''}" onclick="selectCategory('ALL')">全部 (${products.length})</button>`;
+            categories.forEach(cat => {
+                const cnt = products.filter(p => p.categoryId === cat.id).length;
+                html += `<button type="button" class="cat-pill ${selectedCategory === cat.id ? 'active' : ''}" onclick="selectCategory('${cat.id}')">${escapeHtml(cat.name)} (${cnt})</button>`;
+            });
+            wrap.innerHTML = html;
+        }
+
+        function selectCategory(catId) {
+            selectedCategory = catId;
+            renderCategoryTabs();
+            renderProducts();
+        }
+
+        function handleSearch() {
+            const input = document.getElementById('searchInput');
+            searchQuery = input.value.trim().toLowerCase();
+            document.getElementById('clearSearchBtn').classList.toggle('visible', searchQuery.length > 0);
+            renderProducts();
+        }
+
+        function clearSearch() {
+            const input = document.getElementById('searchInput');
+            input.value = '';
+            searchQuery = '';
+            document.getElementById('clearSearchBtn').classList.remove('visible');
+            renderProducts();
+        }
+
+        function getFilteredProducts() {
+            return products.filter(p => {
+                if (selectedCategory !== 'ALL' && p.categoryId !== selectedCategory) return false;
+                if (!searchQuery) return true;
+                return (
+                    p.name.toLowerCase().includes(searchQuery) ||
+                    p.code.toLowerCase().includes(searchQuery) ||
+                    (p.barcode && p.barcode.toLowerCase().includes(searchQuery))
+                );
+            });
+        }
+
+        function renderProducts() {
+            const filtered = getFilteredProducts();
+            const grid = document.getElementById('productGrid');
+            const empty = document.getElementById('emptyState');
+            document.getElementById('productCountText').textContent = `顯示 ${filtered.length} 項貨品`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                empty.classList.add('visible');
+                return;
+            }
+            empty.classList.remove('visible');
+
+            grid.innerHTML = filtered.map(p => {
+                const cat = categories.find(c => c.id === p.categoryId);
+                const catName = cat ? cat.name : '未分類';
+                const uList = getProductUnits(p);
+                let uIdx = selectedUnitsMap[p.id] || 0;
+                if (uIdx >= uList.length) uIdx = 0;
+
+                const curUnitObj = uList[uIdx];
+                const curUnit = curUnitObj.unit;
+                const curSpec = curUnitObj.spec || '';
+
+                const item = cart.find(c => c.key === `${p.id}__${curUnit}`);
+                const qty = item ? item.qty : 0;
+                const anyInCart = cart.some(c => c.productId === p.id && c.qty > 0);
+
+                return `
+                <div class="product-card ${anyInCart ? 'in-cart' : ''}">
+                    <div>
+                        <div class="card-top">
+                            <div class="code-group">
+                                <span class="code-badge">${escapeHtml(p.code)}</span>
+                                ${p.barcode && p.barcode !== p.code ? `<span class="barcode-tag">[${escapeHtml(p.barcode)}]</span>` : ''}
+                            </div>
+                            <span class="cat-tag">${escapeHtml(catName)}</span>
+                        </div>
+                        <div class="product-name">${escapeHtml(p.name)}</div>
+                    </div>
+
+                    <div class="card-bottom">
+                        <div class="unit-area">
+                            <div class="unit-pills">
+                                ${uList.map((uObj, idx) => {
+                                    const matched = cart.find(c => c.key === `${p.id}__${uObj.unit}`);
+                                    const badge = matched && matched.qty > 0 ? ` (${matched.qty})` : '';
+                                    return `<button type="button" class="unit-btn ${uIdx === idx ? 'active' : ''}" onclick="switchProductUnit('${p.id}', ${idx})">${escapeHtml(uObj.unit)}${badge}</button>`;
+                                }).join('')}
+                            </div>
+                            <div class="spec-text">${curSpec ? `規格：<strong>${escapeHtml(curSpec)}</strong>` : '標準規格'}</div>
+                        </div>
+
+                        <div class="stepper">
+                            <button type="button" class="step-btn step-minus ${qty === 0 ? 'zero' : ''}" onclick="changeCartQty('${p.id}', '${escapeHtml(curUnit)}', '${escapeHtml(curSpec)}', -1)">−</button>
+                            <input type="number" class="step-input" min="0" value="${qty}" onchange="setCartQtyDirect('${p.id}', '${escapeHtml(curUnit)}', '${escapeHtml(curSpec)}', this.value)">
+                            <button type="button" class="step-btn step-plus" onclick="changeCartQty('${p.id}', '${escapeHtml(curUnit)}', '${escapeHtml(curSpec)}', 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function switchProductUnit(productId, idx) {
+            selectedUnitsMap[productId] = idx;
+            renderProducts();
+        }
+
+        function changeCartQty(productId, unit, spec, delta) {
+            const p = products.find(item => item.id === productId);
+            if (!p) return;
+
+            const key = `${productId}__${unit}`;
+            const idx = cart.findIndex(item => item.key === key);
+
+            if (idx > -1) {
+                const nextQty = cart[idx].qty + delta;
+                if (nextQty <= 0) {
+                    cart.splice(idx, 1);
+                } else {
+                    cart[idx].qty = nextQty;
+                }
+            } else if (delta > 0) {
+                cart.push({ key, productId, unit, spec, qty: delta });
+            }
+
+            saveCart();
+            renderProducts();
+            if (document.getElementById('cartModal').classList.contains('open')) {
+                renderCartModalItems();
+            }
+        }
+
+        function setCartQtyDirect(productId, unit, spec, rawVal) {
+            const val = parseInt(rawVal, 10);
+            const key = `${productId}__${unit}`;
+            const idx = cart.findIndex(item => item.key === key);
+
+            if (isNaN(val) || val <= 0) {
+                if (idx > -1) cart.splice(idx, 1);
+            } else if (idx > -1) {
+                cart[idx].qty = val;
+            } else {
+                cart.push({ key, productId, unit, spec, qty: val });
+            }
+
+            saveCart();
+            renderProducts();
+            if (document.getElementById('cartModal').classList.contains('open')) {
+                renderCartModalItems();
+            }
+        }
+
+        function changeCartItemUnit(oldKey, newUnit) {
+            const idx = cart.findIndex(i => i.key === oldKey);
+            if (idx === -1) return;
+            const item = cart[idx];
+            if (item.unit === newUnit) return;
+
+            const p = products.find(prod => prod.id === item.productId);
+            const uList = p ? getProductUnits(p) : [];
+            const matched = uList.find(u => u.unit === newUnit);
+            const newSpec = matched ? (matched.spec || '') : '';
+            const newKey = `${item.productId}__${newUnit}`;
+
+            const existingIdx = cart.findIndex(i => i.key === newKey);
+            if (existingIdx > -1) {
+                cart[existingIdx].qty += item.qty;
+                cart.splice(idx, 1);
+            } else {
+                cart[idx] = { ...item, key: newKey, unit: newUnit, spec: newSpec };
+            }
+
+            saveCart();
+            renderProducts();
+            renderCartModalItems();
+            showToast(`已切換單位為「${newUnit}」`);
+        }
+
+        function removeCartItem(key) {
+            cart = cart.filter(i => i.key !== key);
+            saveCart();
+            renderProducts();
+            renderCartModalItems();
+        }
+
+        function confirmClearCart() {
+            if (cart.length === 0) return;
+            showCustomDialog('清空落單清單', '確定要清空目前所有已選貨品嗎？', () => {
+                cart = [];
+                saveCart();
+                renderProducts();
+                renderCartModalItems();
+                showToast('已清空落單清單');
+            });
+        }
+
+        function openCartModal() {
+            document.getElementById('targetWhatsapp').value = targetWhatsapp;
+            renderCartModalItems();
+            updateCartUI();
+            document.getElementById('cartModal').classList.add('open');
+        }
+
+        function closeCartModal() {
+            document.getElementById('cartModal').classList.remove('open');
+        }
+
+        function renderCartModalItems() {
+            const container = document.getElementById('cartItemsContainer');
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="list-card" style="text-align:center;color:var(--text-muted);padding:24px;">尚未選擇任何貨品，請先在目錄點貨或掃碼加入。</div>`;
+                return;
+            }
+
+            container.innerHTML = cart.map(item => {
+                const p = products.find(prod => prod.id === item.productId) || { id: item.productId, code: 'N/A', name: '已移除貨品', units: [] };
+                const uList = getProductUnits(p);
+                const unitNames = uList.map(u => u.unit);
+                if (!unitNames.includes(item.unit)) unitNames.unshift(item.unit);
+
+                return `
+                <div class="list-card">
+                    <div class="flex-between" style="align-items:flex-start;margin-bottom:8px;">
+                        <div style="min-width:0;flex:1;">
+                            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">
+                                <span class="code-badge">${escapeHtml(p.code)}</span>
+                                <select class="form-control" style="width:auto;padding:2px 8px;font-size:12px;font-weight:700;" onchange="changeCartItemUnit('${escapeHtml(item.key)}', this.value)">
+                                    ${unitNames.map(uName => `<option value="${escapeHtml(uName)}" ${uName === item.unit ? 'selected' : ''}>單位：${escapeHtml(uName)}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div style="font-weight:700;font-size:15px;">${escapeHtml(p.name)}</div>
+                        </div>
+
+                        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+                            <div class="stepper">
+                                <button type="button" class="step-btn step-minus" onclick="changeCartQty('${escapeHtml(item.productId)}', '${escapeHtml(item.unit)}', '${escapeHtml(item.spec || '')}', -1)">−</button>
+                                <input type="number" class="step-input" min="0" value="${item.qty}" onchange="setCartQtyDirect('${escapeHtml(item.productId)}', '${escapeHtml(item.unit)}', '${escapeHtml(item.spec || '')}', this.value)">
+                                <button type="button" class="step-btn step-plus" onclick="changeCartQty('${escapeHtml(item.productId)}', '${escapeHtml(item.unit)}', '${escapeHtml(item.spec || '')}', 1)">+</button>
+                            </div>
+                            <button type="button" class="btn-danger-soft" style="width:32px;height:32px;border-radius:8px;font-weight:700;" onclick="removeCartItem('${escapeHtml(item.key)}')" title="移除">✕</button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function updateCartUI() {
+            const totalTypes = cart.length;
+            const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
+            document.getElementById('cartBadgeCount').textContent = totalQty;
+            document.getElementById('cartTotalTypes').textContent = totalTypes;
+            document.getElementById('cartTotalQty').textContent = totalQty;
+            document.getElementById('modalCartSummary').textContent = `${totalTypes} 款 / 共 ${totalQty} 件`;
+
+            const preview = document.getElementById('whatsappPreviewBox');
+            if (preview) {
+                preview.textContent = cart.length > 0 ? buildWhatsAppText() : '（尚未選擇任何貨品）';
+            }
+        }
+
+        function buildWhatsAppText() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const dateStr = `${year}/${month}/${day}`;
+
+            const lines = [
+                `📦 *【合香園 落單明細】*`,
+                `🗓落單日期：${dateStr}`,
+                `--------------------------------`
+            ];
+
+            let totalQty = 0;
+            cart.forEach((item) => {
+                const p = products.find(prod => prod.id === item.productId) || { name: '未知貨品' };
+                totalQty += item.qty;
+                lines.push(`${p.name} — *${item.qty}* ${item.unit}`);
+            });
+
+            lines.push(`--------------------------------`);
+            lines.push(`貨品總數量：*${totalQty}*件`);
+            return lines.join('\n');
+        }
+
+        function sendWhatsAppOrder() {
+            if (cart.length === 0) {
+                showToast('請先加入至少一件貨品再落單', true);
+                return;
+            }
+            saveTargetWhatsapp();
+            const encoded = encodeURIComponent(buildWhatsAppText());
+            const phoneDigits = targetWhatsapp.replace(/\D/g, '');
+            const url = phoneDigits
+                ? `https://wa.me/${phoneDigits}?text=${encoded}`
+                : `https://api.whatsapp.com/send?text=${encoded}`;
+            window.open(url, '_blank');
+        }
+
+        function copyOrderText() {
+            if (cart.length === 0) {
+                showToast('落單清單為空，無法複製', true);
+                return;
+            }
+            const text = buildWhatsAppText();
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast('已複製落單文字！');
+            } catch (err) {
+                showToast('複製失敗，請手動複製預覽內容', true);
+            }
+            document.body.removeChild(ta);
+        }
+
+        function openScannerModal(mode) {
+            scanModeTarget = mode || 'SEARCH';
+            scanHandled = false;
+            document.getElementById('manualBarcodeInput').value = '';
+            document.getElementById('scannerModal').classList.add('open');
+            startCameraScan();
+        }
+
+        function closeScannerModal() {
+            stopCameraScan();
+            document.getElementById('scannerModal').classList.remove('open');
+        }
+
+        function onBarcodeDetected(rawValue) {
+            if (scanHandled) return;
+            const code = String(rawValue || '').trim();
+            if (!code) return;
+            scanHandled = true;
+            closeScannerModal();
+            processScannedCode(code);
+        }
+
+        async function startCameraScan() {
+            const statusEl = document.getElementById('scannerStatus');
+            const videoEl = document.getElementById('scannerVideo');
+
+            if (!window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+                statusEl.innerHTML = '目前非 HTTPS 安全連線，瀏覽器可能會封鎖鏡頭。建議以 HTTPS 開啟，或使用下方「手動輸入 / 條碼槍」。';
+                return;
+            }
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                statusEl.textContent = '此瀏覽器不支援鏡頭存取，請使用下方手動輸入或條碼槍。';
+                return;
+            }
+
+            try {
+                statusEl.textContent = '正在請求鏡頭權限...';
+                mediaStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { ideal: 'environment' } },
+                    audio: false
+                });
+                videoEl.srcObject = mediaStream;
+                videoEl.setAttribute('playsinline', 'true');
+                await videoEl.play();
+
+                if ('BarcodeDetector' in window) {
+                    const detector = new window.BarcodeDetector({
+                        formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'itf', 'codabar', 'qr_code']
+                    });
+                    statusEl.textContent = '鏡頭已啟動，請將條碼對準掃描框...';
+
+                    const tick = async () => {
+                        if (scanHandled || !mediaStream) return;
+                        if (videoEl.readyState >= 2) {
+                            try {
+                                const codes = await detector.detect(videoEl);
+                                if (codes && codes.length > 0 && codes[0].rawValue) {
+                                    onBarcodeDetected(codes[0].rawValue);
+                                    return;
+                                }
+                            } catch (err) {
+                                // ignore transient frame detection errors
+                            }
+                        }
+                        scanLoopId = requestAnimationFrame(tick);
+                    };
+                    scanLoopId = requestAnimationFrame(tick);
+                } else {
+                    statusEl.textContent = '鏡頭已開啟（此瀏覽器未支援自動條碼辨識），請使用下方輸入框掃碼或搜尋。';
+                }
+            } catch (camErr) {
+                const errName = camErr && camErr.name ? camErr.name : '';
+                if (errName === 'NotAllowedError' || errName === 'PermissionDeniedError') {
+                    statusEl.innerHTML = '<strong>鏡頭權限被拒絕</strong>：請到瀏覽器網址列或手機「設定」允許使用相機，然後重新整理；亦可直接用下方輸入條碼。';
+                } else if (errName === 'NotFoundError' || errName === 'DevicesNotFoundError') {
+                    statusEl.textContent = '找不到可用鏡頭，請改用下方手動輸入或條碼槍。';
+                } else if (errName === 'NotReadableError' || errName === 'TrackStartError') {
+                    statusEl.textContent = '鏡頭正被其他程式或分頁佔用，請關閉其他相機程式後重試，或用下方輸入條碼。';
+                } else {
+                    statusEl.textContent = '無法啟動鏡頭（請確認相機權限與 HTTPS 連線，或改用下方輸入條碼）。';
+                }
+            }
+        }
+
+        function stopCameraScan() {
+            if (scanLoopId) {
+                cancelAnimationFrame(scanLoopId);
+                scanLoopId = null;
+            }
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(t => t.stop());
+                mediaStream = null;
+            }
+            const videoEl = document.getElementById('scannerVideo');
+            if (videoEl) {
+                try { videoEl.pause(); } catch (e) { /* ignore */ }
+                videoEl.srcObject = null;
+            }
+        }
+
+        function handleManualBarcodeSubmit(e) {
+            e.preventDefault();
+            const val = document.getElementById('manualBarcodeInput').value.trim();
+            if (!val) return;
+            closeScannerModal();
+            processScannedCode(val);
+        }
+
+        function processScannedCode(code) {
+            if (scanModeTarget === 'FORM_FIELD') {
+                document.getElementById('prodBarcode').value = code;
+                showToast(`已填入條碼：${code}`);
+                return;
+            }
+
+            const lower = code.toLowerCase();
+            const found = products.find(p =>
+                (p.barcode && p.barcode.toLowerCase() === lower) ||
+                p.code.toLowerCase() === lower
+            );
+
+            if (found) {
+                openQuickAddModal(found, code);
+            } else {
+                showCustomDialog(
+                    '找不到此條碼商品',
+                    `系統中尚未有條碼或編號「${code}」的貨品。\n是否立即新增此貨品並綁定此條碼？`,
+                    () => {
+                        openManageModal();
+                        switchManageTab('products');
+                        resetProductForm();
+                        document.getElementById('prodCode').value = code;
+                        document.getElementById('prodBarcode').value = code;
+                        document.getElementById('prodName').focus();
+                    }
+                );
+            }
+        }
+
+        function openQuickAddModal(product, scannedCode) {
+            const uList = getProductUnits(product);
+            const content = document.getElementById('quickAddContent');
+            content.innerHTML = `
+                <div style="background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:10px;margin-bottom:12px;">
+                    <div style="font-size:11px;color:var(--text-muted);font-family:monospace;">編號：${escapeHtml(product.code)} · 條碼：${escapeHtml(scannedCode)}</div>
+                    <div style="font-size:17px;font-weight:800;margin-top:2px;">${escapeHtml(product.name)}</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">選擇訂購單位：</label>
+                    <select id="quickUnitSelect" class="form-control" style="font-weight:700;">
+                        ${uList.map((u, idx) => `<option value="${idx}">${escapeHtml(u.unit)}${u.spec ? ` (${escapeHtml(u.spec)})` : ''}</option>`).join('')}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">訂購數量：</label>
+                    <div style="display:flex;align-items:center;justify-content:center;gap:12px;background:var(--bg-body);padding:8px;border-radius:var(--radius-md);">
+                        <button type="button" class="step-btn step-minus" onclick="adjustQuickQty(-1)">−</button>
+                        <input type="number" id="quickAddQty" value="1" min="1" style="width:64px;text-align:center;font-size:20px;font-weight:800;border:none;background:transparent;">
+                        <button type="button" class="step-btn step-plus" onclick="adjustQuickQty(1)">+</button>
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 2fr;gap:8px;margin-top:14px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeQuickAddModal()">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmQuickAdd('${product.id}')">加入落單清單</button>
+                </div>
+            `;
+            document.getElementById('quickAddModal').classList.add('open');
+        }
+
+        function closeQuickAddModal() { document.getElementById('quickAddModal').classList.remove('open'); }
+
+        function adjustQuickQty(delta) {
+            const input = document.getElementById('quickAddQty');
+            input.value = Math.max(1, (parseInt(input.value, 10) || 1) + delta);
+        }
+
+        function confirmQuickAdd(productId) {
+            const p = products.find(item => item.id === productId);
+            if (!p) return;
+            const uList = getProductUnits(p);
+            const idx = parseInt(document.getElementById('quickUnitSelect').value, 10) || 0;
+            const qty = Math.max(1, parseInt(document.getElementById('quickAddQty').value, 10) || 1);
+            const chosen = uList[idx] || uList[0];
+
+            changeCartQty(productId, chosen.unit, chosen.spec || '', qty);
+            closeQuickAddModal();
+            showToast(`已加入 ${qty} ${chosen.unit} ${p.name}`);
+        }
+
+        function openManageModal() {
+            populateCategorySelect();
+            resetProductForm();
+            renderManageProductList();
+            renderManageCategoryList();
+            renderManageUnitList();
+            document.getElementById('manageModal').classList.add('open');
+        }
+
+        function closeManageModal() { document.getElementById('manageModal').classList.remove('open'); }
+
+        function openProductFormWithQuery() {
+            openManageModal();
+            switchManageTab('products');
+            resetProductForm();
+            const q = document.getElementById('searchInput').value.trim();
+            if (q) {
+                if (/^[0-9A-Za-z-]+$/.test(q)) {
+                    document.getElementById('prodCode').value = q;
+                    document.getElementById('prodBarcode').value = q;
+                } else {
+                    document.getElementById('prodName').value = q;
+                }
+            }
+        }
+
+        function switchManageTab(tab) {
+            const map = {
+                products: ['tabBtnProducts', 'manageTabProducts'],
+                categories: ['tabBtnCategories', 'manageTabCategories'],
+                units: ['tabBtnUnits', 'manageTabUnits'],
+                backup: ['tabBtnBackup', 'manageTabBackup']
+            };
+            Object.keys(map).forEach(k => {
+                document.getElementById(map[k][0]).classList.toggle('active', k === tab);
+                document.getElementById(map[k][1]).classList.toggle('active', k === tab);
+            });
+        }
+
+        function populateCategorySelect() {
+            const select = document.getElementById('prodCategory');
+            select.innerHTML = categories.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+        }
+
+        function buildUnitOptionsHtml(selectedUnit) {
+            const list = [...units];
+            if (selectedUnit && !list.includes(selectedUnit)) list.unshift(selectedUnit);
+            return list.map(u => `<option value="${escapeHtml(u)}" ${u === selectedUnit ? 'selected' : ''}>${escapeHtml(u)}</option>`).join('');
+        }
+
+        function addProductUnitRow(unitVal = '', specVal = '') {
+            const container = document.getElementById('productUnitRows');
+            const idx = container.children.length;
+            const defaultUnit = unitVal || (idx === 0 ? (units[0] || '箱') : (units[1] || units[0] || '盒'));
+
+            const row = document.createElement('div');
+            row.className = 'unit-row';
+            row.innerHTML = `
+                <select class="form-control unit-select" style="padding:7px 8px;font-weight:700;">
+                    ${buildUnitOptionsHtml(defaultUnit)}
+                </select>
+                <input type="text" class="form-control spec-input" style="padding:7px 9px;" value="${escapeHtml(specVal)}" placeholder="包裝規格（如 1X32包 或 500g）">
+                <button type="button" class="btn-danger-soft" style="height:34px;border-radius:8px;font-weight:700;" onclick="removeProductUnitRow(this)" title="移除">✕</button>
+            `;
+            container.appendChild(row);
+        }
+
+        function removeProductUnitRow(btn) {
+            const container = document.getElementById('productUnitRows');
+            if (container.children.length <= 1) {
+                showToast('貨品必須保留至少一個單位', true);
+                return;
+            }
+            btn.closest('.unit-row').remove();
+        }
+
+        function refreshFormUnitSelects() {
+            document.querySelectorAll('#productUnitRows .unit-select').forEach(sel => {
+                const cur = sel.value;
+                sel.innerHTML = buildUnitOptionsHtml(cur);
+            });
+        }
+
+        function quickAddUnitPrompt() {
+            showCustomDialog(
+                '新增自訂單位',
+                '請輸入新的單位名稱（例如：打、條、桶、支、片、件）：',
+                (val) => {
+                    const name = (val || '').trim();
+                    if (!name) return;
+                    if (units.includes(name)) {
+                        showToast(`單位「${name}」已存在`, true);
+                        return;
+                    }
+                    units.push(name);
+                    saveUnits();
+                    renderManageUnitList();
+                    refreshFormUnitSelects();
+                    showToast(`已新增單位「${name}」`);
+                },
+                true,
+                '輸入單位名稱...'
+            );
+        }
+
+        function saveProductForm(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editProductId').value;
+            const code = document.getElementById('prodCode').value.trim();
+            const barcode = document.getElementById('prodBarcode').value.trim() || code;
+            const categoryId = document.getElementById('prodCategory').value;
+            const name = document.getElementById('prodName').value.trim();
+
+            const rows = Array.from(document.querySelectorAll('#productUnitRows .unit-row'));
+            const unitList = [];
+            const seen = new Set();
+            rows.forEach(r => {
+                const u = r.querySelector('.unit-select').value.trim();
+                const s = r.querySelector('.spec-input').value.trim();
+                if (u && !seen.has(u)) {
+                    seen.add(u);
+                    unitList.push({ unit: u, spec: s });
+                }
+            });
+
+            if (unitList.length === 0) {
+                showToast('請設定至少一個單位', true);
+                return;
+            }
+
+            if (editId) {
+                const idx = products.findIndex(p => p.id === editId);
+                if (idx > -1) {
+                    products[idx] = normalizeProduct({ ...products[idx], code, barcode, categoryId, name, units: unitList });
+                    showToast('已更新貨品資料');
+                }
+            } else {
+                products.unshift(normalizeProduct({
+                    id: 'p_' + Date.now(),
+                    code, barcode, categoryId, name, units: unitList
+                }));
+                showToast('已新增貨品至目錄');
+            }
+
+            saveProducts();
+            resetProductForm();
+            renderManageProductList();
+            renderCategoryTabs();
+            renderProducts();
+        }
+
+        function editProduct(productId) {
+            const p = products.find(item => item.id === productId);
+            if (!p) return;
+
+            document.getElementById('editProductId').value = p.id;
+            document.getElementById('prodCode').value = p.code;
+            document.getElementById('prodBarcode').value = p.barcode || '';
+            document.getElementById('prodCategory').value = p.categoryId;
+            document.getElementById('prodName').value = p.name;
+
+            const container = document.getElementById('productUnitRows');
+            container.innerHTML = '';
+            getProductUnits(p).forEach(u => addProductUnitRow(u.unit, u.spec));
+
+            document.getElementById('productFormTitle').textContent = `修改貨品：${p.name}`;
+            document.getElementById('cancelEditProductBtn').style.display = 'inline-block';
+            document.getElementById('manageScrollBody').scrollTop = 0;
+        }
+
+        function resetProductForm() {
+            document.getElementById('productForm').reset();
+            document.getElementById('editProductId').value = '';
+            const container = document.getElementById('productUnitRows');
+            container.innerHTML = '';
+            addProductUnitRow(units[0] || '箱', '');
+            document.getElementById('productFormTitle').textContent = '+ 新增貨品';
+            document.getElementById('cancelEditProductBtn').style.display = 'none';
+        }
+
+        function deleteProduct(productId) {
+            const p = products.find(item => item.id === productId);
+            if (!p) return;
+            showCustomDialog('刪除貨品', `確定要刪除「${p.code} ${p.name}」嗎？`, () => {
+                products = products.filter(item => item.id !== productId);
+                saveProducts();
+                renderManageProductList();
+                renderCategoryTabs();
+                renderProducts();
+                showToast('已刪除貨品');
+            });
+        }
+
+        function renderManageProductList() {
+            const q = (document.getElementById('manageSearchInput').value || '').trim().toLowerCase();
+            const list = products.filter(p =>
+                !q || p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q) || (p.barcode && p.barcode.toLowerCase().includes(q))
+            );
+            document.getElementById('manageProdCount').textContent = list.length;
+
+            document.getElementById('manageProductList').innerHTML = list.map(p => {
+                const cat = categories.find(c => c.id === p.categoryId);
+                const uSummary = getProductUnits(p).map(u => `${escapeHtml(u.unit)}${u.spec ? `(${escapeHtml(u.spec)})` : ''}`).join(' / ');
+                return `
+                <div class="list-card flex-between">
+                    <div style="min-width:0;flex:1;">
+                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
+                            <span class="code-badge">${escapeHtml(p.code)}</span>
+                            <span style="font-size:11px;font-weight:700;color:var(--brand);">${cat ? escapeHtml(cat.name) : '未分類'}</span>
+                        </div>
+                        <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(p.name)}</div>
+                        <div style="font-size:12px;color:var(--text-muted);">單位：${uSummary}</div>
+                    </div>
+                    <div style="display:flex;gap:6px;flex-shrink:0;">
+                        <button type="button" class="btn btn-warn-soft" style="padding:5px 10px;font-size:12px;" onclick="editProduct('${p.id}')">修改</button>
+                        <button type="button" class="btn btn-danger-soft" style="padding:5px 10px;font-size:12px;" onclick="deleteProduct('${p.id}')">刪除</button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function addCategory(e) {
+            e.preventDefault();
+            const input = document.getElementById('newCategoryName');
+            const name = input.value.trim();
+            if (!name) return;
+
+            categories.push({ id: 'cat_' + Date.now(), name });
+            saveCategories();
+            input.value = '';
+            populateCategorySelect();
+            renderManageCategoryList();
+            renderCategoryTabs();
+            showToast(`已新增種類「${name}」`);
+        }
+
+        function renameCategory(catId, newName) {
+            const trimmed = newName.trim();
+            if (!trimmed) { renderManageCategoryList(); return; }
+            const cat = categories.find(c => c.id === catId);
+            if (cat && cat.name !== trimmed) {
+                cat.name = trimmed;
+                saveCategories();
+                populateCategorySelect();
+                renderCategoryTabs();
+                renderProducts();
+                showToast('種類名稱已更新');
+            }
+        }
+
+        function deleteCategory(catId) {
+            if (categories.length <= 1) { showToast('必須保留至少一個貨品種類', true); return; }
+            const cat = categories.find(c => c.id === catId);
+            if (!cat) return;
+            const count = products.filter(p => p.categoryId === catId).length;
+            const msg = count > 0
+                ? `種類「${cat.name}」內仍有 ${count} 項貨品，刪除後將自動移至第一個種類。確定刪除？`
+                : `確定要刪除種類「${cat.name}」嗎？`;
+
+            showCustomDialog('刪除種類', msg, () => {
+                categories = categories.filter(c => c.id !== catId);
+                const fallbackId = categories[0].id;
+                products.forEach(p => { if (p.categoryId === catId) p.categoryId = fallbackId; });
+                if (selectedCategory === catId) selectedCategory = 'ALL';
+
+                saveCategories();
+                saveProducts();
+                populateCategorySelect();
+                renderManageCategoryList();
+                renderCategoryTabs();
+                renderProducts();
+                showToast('已刪除種類');
+            });
+        }
+
+        function renderManageCategoryList() {
+            document.getElementById('manageCategoryList').innerHTML = categories.map(cat => {
+                const count = products.filter(p => p.categoryId === cat.id).length;
+                return `
+                <div class="list-card flex-between">
+                    <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">
+                        <input type="text" class="form-control" style="padding:6px 9px;font-weight:700;" value="${escapeHtml(cat.name)}" onchange="renameCategory('${cat.id}', this.value)">
+                        <span style="font-size:12px;color:var(--text-muted);white-space:nowrap;">${count} 項</span>
+                    </div>
+                    <button type="button" class="btn btn-danger-soft" style="padding:6px 10px;font-size:12px;" onclick="deleteCategory('${cat.id}')">刪除</button>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function addUnit(e) {
+            e.preventDefault();
+            const input = document.getElementById('newUnitName');
+            const name = input.value.trim();
+            if (!name) return;
+            if (units.includes(name)) { showToast(`單位「${name}」已存在`, true); return; }
+            units.push(name);
+            saveUnits();
+            input.value = '';
+            renderManageUnitList();
+            refreshFormUnitSelects();
+            showToast(`已新增單位「${name}」`);
+        }
+
+        function renameUnit(oldUnit, newRaw) {
+            const newName = newRaw.trim();
+            if (!newName || newName === oldUnit) { renderManageUnitList(); return; }
+            if (units.includes(newName)) { showToast(`單位「${newName}」已存在`, true); renderManageUnitList(); return; }
+
+            const idx = units.indexOf(oldUnit);
+            if (idx > -1) units[idx] = newName;
+
+            let synced = 0;
+            products = products.map(p => {
+                let changed = false;
+                const nextUnits = getProductUnits(p).map(u => {
+                    if (u.unit === oldUnit) { changed = true; return { ...u, unit: newName }; }
+                    return u;
+                });
+                if (changed) { synced++; return normalizeProduct({ ...p, units: nextUnits }); }
+                return p;
+            });
+
+            cart = cart.map(item => item.unit === oldUnit ? { ...item, unit: newName, key: `${item.productId}__${newName}` } : item);
+
+            saveUnits(); saveProducts(); saveCart();
+            renderManageUnitList(); renderManageProductList(); refreshFormUnitSelects(); renderProducts();
+            showToast(`已改為「${newName}」（同步 ${synced} 項貨品）`);
+        }
+
+        function deleteUnit(unitName) {
+            if (units.length <= 1) { showToast('必須保留至少一個單位', true); return; }
+            const used = products.filter(p => getProductUnits(p).some(u => u.unit === unitName));
+            const fallback = units.find(u => u !== unitName) || '箱';
+            const msg = used.length > 0
+                ? `目前有 ${used.length} 項貨品使用單位「${unitName}」。\n刪除後將自動改為「${fallback}」。確定刪除？`
+                : `確定要刪除單位「${unitName}」嗎？`;
+
+            showCustomDialog('刪除單位', msg, () => {
+                units = units.filter(u => u !== unitName);
+                if (used.length > 0) {
+                    products = products.map(p => {
+                        const uList = getProductUnits(p);
+                        if (!uList.some(u => u.unit === unitName)) return p;
+                        const mapped = uList.map(u => u.unit === unitName ? { ...u, unit: fallback } : u);
+                        const dedup = [];
+                        const seen = new Set();
+                        mapped.forEach(item => { if (!seen.has(item.unit)) { seen.add(item.unit); dedup.push(item); } });
+                        return normalizeProduct({ ...p, units: dedup });
+                    });
+                    saveProducts();
+                }
+                saveUnits();
+                renderManageUnitList(); renderManageProductList(); refreshFormUnitSelects(); renderProducts();
+                showToast(`已刪除單位「${unitName}」`);
+            });
+        }
+
+        function renderManageUnitList() {
+            document.getElementById('manageUnitCount').textContent = units.length;
+            document.getElementById('manageUnitList').innerHTML = units.map(u => {
+                const count = products.filter(p => getProductUnits(p).some(i => i.unit === u)).length;
+                return `
+                <div class="list-card flex-between" style="margin-bottom:0;">
+                    <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:0;">
+                        <input type="text" class="form-control" style="padding:6px 9px;font-weight:700;" value="${escapeHtml(u)}" onchange="renameUnit('${escapeHtml(u)}', this.value)">
+                        <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">${count} 項</span>
+                    </div>
+                    <button type="button" class="btn btn-danger-soft" style="padding:6px 9px;font-size:12px;" onclick="deleteUnit('${escapeHtml(u)}')">刪除</button>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function exportDataJSON() {
+            const payload = { app: 'HHY_Order_System_NoPrice', exportedAt: new Date().toISOString(), units, categories, products };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `合香園貨單備份_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('已匯出 JSON 備份檔案');
+        }
+
+        function importDataJSON(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                try {
+                    const data = JSON.parse(ev.target.result);
+                    if (Array.isArray(data.categories) && Array.isArray(data.products)) {
+                        if (Array.isArray(data.units) && data.units.length > 0) units = data.units;
+                        categories = data.categories;
+                        products = data.products.map(normalizeProduct);
+                        saveUnits(); saveCategories(); saveProducts();
+                        selectedCategory = 'ALL';
+                        populateCategorySelect(); resetProductForm();
+                        renderManageUnitList(); renderManageProductList(); renderManageCategoryList();
+                        renderCategoryTabs(); renderProducts();
+                        showToast(`成功匯入 ${products.length} 項貨品！`);
+                    } else {
+                        showToast('備份檔格式不正確', true);
+                    }
+                } catch (err) {
+                    showToast('讀取檔案失敗', true);
+                }
+            };
+            reader.readAsText(file);
+            e.target.value = '';
+        }
+
+        function confirmResetDefaults() {
+            showCustomDialog('重設預設資料', '確定要還原為系統內建的「合香園」初始商品目錄、種類與單位嗎？', () => {
+                units = [...DEFAULT_UNITS];
+                categories = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
+                products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS)).map(normalizeProduct);
+                saveUnits(); saveCategories(); saveProducts();
+                selectedCategory = 'ALL';
+                populateCategorySelect(); resetProductForm();
+                renderManageUnitList(); renderManageProductList(); renderManageCategoryList();
+                renderCategoryTabs(); renderProducts();
+                showToast('已重設為預設合香園貨單');
+            });
+        }
+
+        let toastTimer = null;
+        function showToast(msg, isError = false) {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.classList.toggle('error', isError);
+            el.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
+        }
+
+        let dialogCallback = null;
+        function showCustomDialog(title, msg, onConfirm, withInput = false, placeholder = '') {
+            document.getElementById('dialogTitle').textContent = title;
+            document.getElementById('dialogMessage').textContent = msg;
+            const inputWrap = document.getElementById('dialogInputWrap');
+            const inputField = document.getElementById('dialogInputField');
+            if (withInput) {
+                inputWrap.style.display = 'block';
+                inputField.value = '';
+                inputField.placeholder = placeholder;
+                setTimeout(() => inputField.focus(), 60);
+            } else {
+                inputWrap.style.display = 'none';
+            }
+            dialogCallback = onConfirm;
+            document.getElementById('customDialog').classList.add('open');
+        }
+
+        function closeCustomDialog() {
+            document.getElementById('customDialog').classList.remove('open');
+            dialogCallback = null;
+        }
+
+        document.getElementById('dialogConfirmBtn').addEventListener('click', () => {
+            const val = document.getElementById('dialogInputField').value;
+            const cb = dialogCallback;
+            closeCustomDialog();
+            if (cb) cb(val);
+        });
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+</html>
