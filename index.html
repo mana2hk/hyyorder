@@ -176,6 +176,26 @@
             white-space: nowrap; max-width: 120px; overflow: hidden; text-overflow: ellipsis;
         }
 
+        .btn-card-edit {
+            font-size: 11px; font-weight: 700; color: var(--text-muted);
+            background: var(--bg-subtle); border: 1px solid var(--border-strong);
+            padding: 2px 7px; border-radius: 6px; white-space: nowrap;
+        }
+        .btn-card-edit:hover {
+            background: var(--brand-light); color: var(--brand-dark); border-color: var(--brand-border);
+        }
+
+        .btn-sort-strip {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: #ffffff; color: var(--brand-dark);
+            border: 1px solid var(--brand-border);
+            padding: 3px 10px; border-radius: var(--radius-full);
+            font-weight: 700; font-size: 11px; box-shadow: var(--shadow-sm);
+        }
+        .btn-sort-strip:hover {
+            background: var(--brand-light);
+        }
+
         .product-name { font-size: 16px; font-weight: 700; color: var(--text-main); line-height: 1.35; }
 
         .card-bottom {
@@ -408,7 +428,13 @@
     <main class="main-container">
         <div class="status-strip">
             <span id="productCountText">載入中...</span>
-            <span class="badge-noprice">無價錢版 · 自由增刪貨品/種類/單位</span>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                <button type="button" id="quickSortBtn" class="btn-sort-strip" onclick="toggleQuickSort()" title="一按重新排序">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M10 18h4"/></svg>
+                    <span id="quickSortLabel">排序：預設</span>
+                </button>
+                <span class="badge-noprice">無價錢版 · 自由增刪貨品/種類/單位</span>
+            </div>
         </div>
 
         <div id="productGrid" class="product-grid"></div>
@@ -723,10 +749,10 @@
 ];
 
         const DEFAULT_PRODUCTS = [
-            {"id": "p_1795236825311", "code": "0211001-C", "barcode": "4902750865761", "categoryId": "cat_candy", "name": "特濃8.2牛奶糖 (咖啡)", "units": [{"unit": "盒", "spec": "37gX10條"}]},
-            {"id": "p_1795236305016", "code": "0211001-A", "barcode": "4902750865761", "categoryId": "cat_candy", "name": "特濃8.2牛奶糖 (牛奶)", "units": [{"unit": "盒", "spec": "37gX10條"}]},
+            {"id": "p_1795236825311", "code": "0211001-C", "barcode": "0211001-C", "categoryId": "cat_candy", "name": "特濃8.2牛奶糖 (咖啡)", "units": [{"unit": "盒", "spec": "37gX10條"}]},
+            {"id": "p_1795236305016", "code": "0211001-A", "barcode": "0211001-A", "categoryId": "cat_candy", "name": "特濃8.2牛奶糖 (牛奶)", "units": [{"unit": "盒", "spec": "37gX10條"}]},
             {"id": "p_1795235462898", "code": "412001-A", "barcode": "4901360358311", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(輕鹽紅薯)", "units": [{"unit": "盒", "spec": "1X10條"}]},
-            {"id": "p_1795229704946", "code": "1001003-H", "barcode": "6937962107000", "categoryId": "cat_noodle", "name": "康師傅碗麵（蔥香排骨麵）", "units": [{"unit": "箱", "spec": "112g X12碗"}]},
+            {"id": "p_1795229704946", "code": "1001003-H", "barcode": "1001003-H", "categoryId": "cat_noodle", "name": "康師傅碗麵（蔥香排骨麵）", "units": [{"unit": "箱", "spec": "112g X12碗"}]},
             {"id": "p_1795224172380", "code": "0129001-D", "barcode": "9556173490267", "categoryId": "cat_candy", "name": "扁條糖(香橙味)", "units": [{"unit": "筒", "spec": "100條"}]},
             {"id": "p_1795224110795", "code": "0129001-E", "barcode": "9556173490267", "categoryId": "cat_candy", "name": "扁條糖(草莓味)", "units": [{"unit": "筒", "spec": "100條"}]},
             {"id": "p_1795223980748", "code": "0129001-H", "barcode": "9556173490267", "categoryId": "cat_candy", "name": "扁條糖(番石榴味)", "units": [{"unit": "筒", "spec": "100條"}]},
@@ -872,9 +898,9 @@
             {"id": "p_021001H", "code": "021001-H", "barcode": "021001-H", "categoryId": "cat_candy", "name": "的嗒糖 (橙)", "units": [{"unit": "盒", "spec": "24gX24小盒"}]},
             {"id": "p_021001J", "code": "021001-J", "barcode": "021001-J", "categoryId": "cat_candy", "name": "的嗒糖 (薄荷)", "units": [{"unit": "盒", "spec": "24gX24小盒"}, {"unit": "箱", "spec": "24gX24小盒X12盒"}]},
             {"id": "p_021021A", "code": "021021-A", "barcode": "021021-A", "categoryId": "cat_candy", "name": "百分百什果軟糖 (1kg)", "units": [{"unit": "袋", "spec": "1X1kg"}, {"unit": "箱", "spec": "1X12包X1kg"}]},
-            {"id": "p_0211001D", "code": "0211001-D", "barcode": "4902750865761", "categoryId": "cat_candy", "name": "特濃8.2牛奶糖 (綠茶)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": ""}]},
-            {"id": "p_0211001E", "code": "0211001-E", "barcode": "4902750865761", "categoryId": "cat_candy", "name": "特濃8.2牛奶糖 (草莓)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": ""}]},
-            {"id": "p_0211001G", "code": "0211001-G", "barcode": "4902750865761", "categoryId": "cat_candy", "name": "特濃8.2牛奶糖 (芝麻)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_0211001D", "code": "0211001-D", "barcode": "0211001-D", "categoryId": "cat_candy", "name": "特濃8.2牛奶糖 (綠茶)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_0211001E", "code": "0211001-E", "barcode": "0211001-E", "categoryId": "cat_candy", "name": "特濃8.2牛奶糖 (草莓)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_0211001G", "code": "0211001-G", "barcode": "0211001-G", "categoryId": "cat_candy", "name": "特濃8.2牛奶糖 (芝麻)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": ""}]},
             {"id": "p_0212011", "code": "0212011", "barcode": "0212011", "categoryId": "cat_candy", "name": "e-ma (清新檸檬味)", "units": [{"unit": "盒", "spec": "1X6小盒"}, {"unit": "個", "spec": ""}]},
             {"id": "p_0212011A", "code": "0212011-A", "barcode": "0212011-A", "categoryId": "cat_candy", "name": "e-ma (乳酸味)", "units": [{"unit": "盒", "spec": "1X6小盒"}, {"unit": "個", "spec": ""}]},
             {"id": "p_0212011B", "code": "0212011-B", "barcode": "0212011-B", "categoryId": "cat_candy", "name": "e-ma (提子味)", "units": [{"unit": "盒", "spec": "1X6小盒"}, {"unit": "個", "spec": ""}]},
@@ -963,26 +989,65 @@
             {"id": "p_029020B", "code": "029020-B", "barcode": "029020-B", "categoryId": "cat_candy", "name": "甄誠記 椰子硬糖", "units": [{"unit": "包", "spec": "300g"}, {"unit": "箱", "spec": "300gX30包"}]},
             {"id": "p_029031A", "code": "029031A", "barcode": "029031A", "categoryId": "cat_candy", "name": "白兔奶糖 5磅(散裝)", "units": [{"unit": "盒", "spec": "5磅"}, {"unit": "箱", "spec": "5磅X6盒"}]},
             {"id": "p_029031B", "code": "029031B", "barcode": "029031B", "categoryId": "cat_candy", "name": "白兔奶糖(單包裝)", "units": [{"unit": "盒", "spec": "180gX15包"}, {"unit": "箱", "spec": "180gX60包"}]},
+            {"id": "p_030002", "code": "030002", "barcode": "030002", "categoryId": "cat_meat", "name": "豬頭嘜 A級肉鬆", "units": [{"unit": "盒", "spec": "1X12罐"}]},
+            {"id": "p_100001", "code": "100001", "barcode": "100001", "categoryId": "cat_noodle", "name": "Indo mie 印尼麵", "units": [{"unit": "箱", "spec": "5包裝X8袋"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_100003A", "code": "100003-A", "barcode": "100003-A", "categoryId": "cat_noodle", "name": "EDO 沖繩杯麵 (海鮮味)", "units": [{"unit": "箱", "spec": "70gX12杯"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_100003B", "code": "100003-B", "barcode": "100003-B", "categoryId": "cat_noodle", "name": "EDO 沖繩杯麵 (熊本地雞)", "units": [{"unit": "箱", "spec": "70gX12杯"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_100003C", "code": "100003-C", "barcode": "100003-C", "categoryId": "cat_noodle", "name": "EDO 沖繩杯麵 (札幌豚骨)", "units": [{"unit": "箱", "spec": "70gX12杯"}, {"unit": "個", "spec": ""}]},
             {"id": "p_100013", "code": "100013", "barcode": "100013", "categoryId": "cat_noodle", "name": "滿地可 咪咪面", "units": [{"unit": "袋", "spec": "1X50包"}, {"unit": "箱", "spec": "12袋X50包"}]},
             {"id": "p_100013A", "code": "100013-A", "barcode": "100013-A", "categoryId": "cat_noodle", "name": "滿地可 咪咪面(20包裝)", "units": [{"unit": "袋", "spec": "1X30包"}, {"unit": "箱", "spec": "20袋X20包"}]},
             {"id": "p_100015", "code": "100015", "barcode": "100015", "categoryId": "cat_noodle", "name": "辛辣麵 (5包裝)", "units": [{"unit": "箱", "spec": "1X40包"}, {"unit": "箱", "spec": ""}]},
-            {"id": "p_1001003A", "code": "1001003-A", "barcode": "6937962107000", "categoryId": "cat_noodle", "name": "康師傅碗麵 (紅燒牛肉)", "units": [{"unit": "箱", "spec": "112gX12碗"}]},
-            {"id": "p_1001003B", "code": "1001003-B", "barcode": "6937962107000", "categoryId": "cat_noodle", "name": "康師傅碗麵 (香菇燉雞)", "units": [{"unit": "箱", "spec": "105gX12碗"}]},
-            {"id": "p_1001003C", "code": "1001003-C", "barcode": "6937962107000", "categoryId": "cat_noodle", "name": "康師傅碗麵 (老壇酸菜牛肉)", "units": [{"unit": "箱", "spec": "122gX12碗"}]},
-            {"id": "p_1001003D", "code": "1001003-D", "barcode": "6937962107000", "categoryId": "cat_noodle", "name": "康師傅碗麵 (香辣牛肉)", "units": [{"unit": "箱", "spec": "112gX12碗"}, {"unit": "個", "spec": ""}]},
-            {"id": "p_1001003E", "code": "1001003-E", "barcode": "6937962107000", "categoryId": "cat_noodle", "name": "康師傅碗麵 (泡椒牛肉)", "units": [{"unit": "箱", "spec": "112gX12碗"}]},
-            {"id": "p_1001003F", "code": "1001003-F", "barcode": "6937962107000", "categoryId": "cat_noodle", "name": "康師傅碗麵 (鮮蝦魚板)", "units": [{"unit": "箱", "spec": "112gX12碗"}, {"unit": "個", "spec": ""}]},
-            {"id": "p_1001003G", "code": "1001003-G", "barcode": "6937962107000", "categoryId": "cat_noodle", "name": "康師傅碗麵 (鹵香牛肉麵)", "units": [{"unit": "箱", "spec": "112gX12碗"}, {"unit": "個", "spec": ""}]},
-            {"id": "p_1001004B", "code": "1001004-B", "barcode": "1001004-B", "categoryId": "cat_noodle", "name": "康師博包裝麵 (酸菜牛肉)", "units": [{"unit": "箱", "spec": "1x30包"}]},
+            {"id": "p_1001001", "code": "1001001", "barcode": "1001001", "categoryId": "cat_noodle", "name": "福字伊麵", "units": [{"unit": "盒", "spec": "1X30包"}, {"unit": "扎", "spec": "3盒X30包"}]},
+            {"id": "p_1001002", "code": "1001002", "barcode": "1001002", "categoryId": "cat_noodle", "name": "福字米粉", "units": [{"unit": "盒", "spec": "1X30包"}, {"unit": "扎", "spec": "3盒X30包"}]},
+            {"id": "p_1001003A", "code": "1001003-A", "barcode": "1001003-A", "categoryId": "cat_noodle", "name": "康師傅碗麵 (紅燒牛肉)", "units": [{"unit": "箱", "spec": "112gX12碗"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1001003B", "code": "1001003-B", "barcode": "1001003-B", "categoryId": "cat_noodle", "name": "康師傅碗麵 (香菇燉雞)", "units": [{"unit": "箱", "spec": "105gX12碗"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1001003C", "code": "1001003-C", "barcode": "1001003-C", "categoryId": "cat_noodle", "name": "康師傅碗麵 (老壇酸菜牛肉)", "units": [{"unit": "箱", "spec": "122gX12碗"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1001003D", "code": "1001003-D", "barcode": "1001003-D", "categoryId": "cat_noodle", "name": "康師傅碗麵 (香辣牛肉)", "units": [{"unit": "箱", "spec": "112gX12碗"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1001003E", "code": "1001003-E", "barcode": "1001003-E", "categoryId": "cat_noodle", "name": "康師傅碗麵 (泡椒牛肉)", "units": [{"unit": "箱", "spec": "112gX12碗"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1001003F", "code": "1001003-F", "barcode": "1001003-F", "categoryId": "cat_noodle", "name": "康師傅碗麵 (鮮蝦魚板)", "units": [{"unit": "箱", "spec": "112gX12碗"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1001003G", "code": "1001003-G", "barcode": "1001003-G", "categoryId": "cat_noodle", "name": "康師傅碗麵 (鹵香牛肉麵)", "units": [{"unit": "箱", "spec": "112gX12碗"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1001004A", "code": "1001004-A", "barcode": "1001004-A", "categoryId": "cat_noodle", "name": "康師博包裝麵 (紅燒牛肉)", "units": [{"unit": "箱", "spec": "1x30包"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1001004B", "code": "1001004-B", "barcode": "1001004-B", "categoryId": "cat_noodle", "name": "康師博包裝麵 (酸菜牛肉)", "units": [{"unit": "箱", "spec": "1x30包"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1001004C", "code": "1001004-C", "barcode": "1001004-C", "categoryId": "cat_noodle", "name": "康師博包裝麵 (鹵香牛肉)", "units": [{"unit": "箱", "spec": "1x30包"}, {"unit": "個", "spec": ""}]},
             {"id": "p_1001004D", "code": "1001004-D", "barcode": "1001004-D", "categoryId": "cat_noodle", "name": "康師博包裝麵 (香辣牛肉)", "units": [{"unit": "箱", "spec": "1x30包"}, {"unit": "個", "spec": ""}]},
-            {"id": "p_1002001D", "code": "1002001-A", "barcode": "1002001-D", "categoryId": "cat_noodle", "name": "出前一丁 公仔麵(麻油)", "units": [{"unit": "盒", "spec": "1X30包"}, {"unit": "扎", "spec": "3盒X30包"}]},
-            {"id": "p_1003001A", "code": "1003001-A", "barcode": "4897878630028", "categoryId": "cat_noodle", "name": "合味道 大杯麵(海鮮)", "units": [{"unit": "箱", "spec": "99gX12杯"}, {"unit": "扎", "spec": "99gX24杯"}]},
-            {"id": "p_1003001B", "code": "1003001-B", "barcode": "4897878630028", "categoryId": "cat_noodle", "name": "合味道 大杯麵(香辣海鮮)", "units": [{"unit": "箱", "spec": "103gX12杯"}, {"unit": "扎", "spec": "103gX24杯"}]},
-            {"id": "p_1003001C", "code": "1003001-C", "barcode": "4897878630028", "categoryId": "cat_noodle", "name": "合味道 大杯麵(豬骨)", "units": [{"unit": "箱", "spec": "99gX12杯"}, {"unit": "扎", "spec": "99gX24杯"}]},
-            {"id": "p_1003001D", "code": "1003001-D", "barcode": "4897878630028", "categoryId": "cat_noodle", "name": "合味道 大杯麵(咖喱海鮮)", "units": [{"unit": "箱", "spec": "99gX12杯"}, {"unit": "扎", "spec": "99gX24杯"}]},
-            {"id": "p_1003001E", "code": "1003001-E", "barcode": "4897878630028", "categoryId": "cat_noodle", "name": "合味道 大杯麵(芝士咖喱)", "units": [{"unit": "箱", "spec": "1X12杯"}, {"unit": "扎", "spec": "2盒X12杯"}]},
-            {"id": "p_1003001F", "code": "1003001-F", "barcode": "4897878630028", "categoryId": "cat_noodle", "name": "合味道 大杯麵(XO)", "units": [{"unit": "箱", "spec": "99gX12杯"}, {"unit": "扎", "spec": "99gX24杯"}]},
-            {"id": "p_1003001G", "code": "1003001-G", "barcode": "4897878630028", "categoryId": "cat_noodle", "name": "合味道 大杯麵(極辛豬骨)", "units": [{"unit": "盒", "spec": "1X12杯"}, {"unit": "扎", "spec": "2盒X12杯"}]},
+            {"id": "p_1002001D", "code": "1002001-D", "barcode": "1002001-D", "categoryId": "cat_noodle", "name": "出前一丁 公仔麵(黑蒜油)", "units": [{"unit": "盒", "spec": "1X30包"}, {"unit": "扎", "spec": "3盒X30包"}]},
+            {"id": "p_1002001E", "code": "1002001-E", "barcode": "1002001-E", "categoryId": "cat_noodle", "name": "出前一丁 公仔麵(海鮮)", "units": [{"unit": "盒", "spec": "1X30包"}, {"unit": "扎", "spec": "3盒X30包"}]},
+            {"id": "p_1002002A", "code": "1002002-A", "barcode": "1002002-A", "categoryId": "cat_noodle", "name": "出前一丁 杯麵(麻油)", "units": [{"unit": "箱", "spec": "72gX24杯"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1002002B", "code": "1002002-B", "barcode": "1002002-B", "categoryId": "cat_noodle", "name": "出前一丁 杯麵(黑蒜油)", "units": [{"unit": "箱", "spec": "72gX24杯"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1002002C", "code": "1002002-C", "barcode": "1002002-C", "categoryId": "cat_noodle", "name": "出前一丁 杯麵(辣肉味噌)", "units": [{"unit": "箱", "spec": "72gX24杯"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1002002D", "code": "1002002-D", "barcode": "1002002-D", "categoryId": "cat_noodle", "name": "出前一丁 杯麵(博多豬骨濃湯)", "units": [{"unit": "箱", "spec": "72gX24杯"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1002002E", "code": "1002002-E", "barcode": "1002002-E", "categoryId": "cat_noodle", "name": "出前一丁 杯麵(海鮮)", "units": [{"unit": "箱", "spec": "72gX24杯"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1002002F", "code": "1002002-F", "barcode": "1002002-F", "categoryId": "cat_noodle", "name": "出前一丁 碗麵(麻油)", "units": [{"unit": "扎", "spec": "105gX12杯X2箱"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1002002G", "code": "1002002-G", "barcode": "1002002-G", "categoryId": "cat_noodle", "name": "出前一丁 碗麵(特辣豬骨濃湯)", "units": [{"unit": "扎", "spec": "111gX12杯X2箱"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1002003A", "code": "1002003-A", "barcode": "1002003-A", "categoryId": "cat_noodle", "name": "出前一丁 棒烏冬(咖哩味)", "units": [{"unit": "箱", "spec": "167gX30包"}, {"unit": "扎", "spec": ""}]},
+            {"id": "p_1002003B", "code": "1002003-B", "barcode": "1002003-B", "categoryId": "cat_noodle", "name": "出前一丁 棒烏冬(鰹魚湯味)", "units": [{"unit": "箱", "spec": "159gX30包"}, {"unit": "扎", "spec": ""}]},
+            {"id": "p_1002003C", "code": "1002003-C", "barcode": "1002003-C", "categoryId": "cat_noodle", "name": "出前一丁 棒烏冬(番茄牛肉味)", "units": [{"unit": "箱", "spec": "177gX30包"}, {"unit": "扎", "spec": ""}]},
+            {"id": "p_1002003D", "code": "1002003-D", "barcode": "1002003-D", "categoryId": "cat_noodle", "name": "出前一丁 棒烏冬(黑蒜豬骨味)", "units": [{"unit": "箱", "spec": "186gX30包"}, {"unit": "扎", "spec": ""}]},
+            {"id": "p_1002003E", "code": "1002003-E", "barcode": "1002003-E", "categoryId": "cat_noodle", "name": "出前一丁 棒烏冬(九洲豬骨湯味)", "units": [{"unit": "箱", "spec": "186gX30包"}, {"unit": "扎", "spec": ""}]},
+            {"id": "p_1002003F", "code": "1002003-F", "barcode": "1002003-F", "categoryId": "cat_noodle", "name": "出前一丁 棒烏冬(鮮蝦鹽味)", "units": [{"unit": "箱", "spec": "167gX30包"}, {"unit": "扎", "spec": ""}]},
+            {"id": "p_1002003I", "code": "1002003-I", "barcode": "1002003-I", "categoryId": "cat_noodle", "name": "日清 咚兵衛腐皮烏冬", "units": [{"unit": "箱", "spec": "95gX12碗"}, {"unit": "扎", "spec": ""}]},
+            {"id": "p_1003001A", "code": "1003001-A", "barcode": "1003001-A", "categoryId": "cat_noodle", "name": "合味道 大杯麵(海鮮)", "units": [{"unit": "箱", "spec": "99gX12杯"}, {"unit": "扎", "spec": "99gX24杯"}]},
+            {"id": "p_1003001B", "code": "1003001-B", "barcode": "1003001-B", "categoryId": "cat_noodle", "name": "合味道 大杯麵(香辣海鮮)", "units": [{"unit": "箱", "spec": "103gX12杯"}, {"unit": "扎", "spec": "103gX24杯"}]},
+            {"id": "p_1003001C", "code": "1003001-C", "barcode": "1003001-C", "categoryId": "cat_noodle", "name": "合味道 大杯麵(豬骨)", "units": [{"unit": "箱", "spec": "99gX12杯"}, {"unit": "扎", "spec": "99gX24杯"}]},
+            {"id": "p_1003001D", "code": "1003001-D", "barcode": "1003001-D", "categoryId": "cat_noodle", "name": "合味道 大杯麵(咖喱海鮮)", "units": [{"unit": "箱", "spec": "99gX12杯"}, {"unit": "扎", "spec": "99gX24杯"}]},
+            {"id": "p_1003001E", "code": "1003001-E", "barcode": "1003001-E", "categoryId": "cat_noodle", "name": "合味道 大杯麵(芝士咖喱)", "units": [{"unit": "箱", "spec": "1X12杯"}, {"unit": "扎", "spec": "2盒X12杯"}]},
+            {"id": "p_1003001F", "code": "1003001-F", "barcode": "1003001-F", "categoryId": "cat_noodle", "name": "合味道 大杯麵(XO)", "units": [{"unit": "箱", "spec": "99gX12杯"}, {"unit": "扎", "spec": "99gX24杯"}]},
+            {"id": "p_1003001G", "code": "1003001-G", "barcode": "1003001-G", "categoryId": "cat_noodle", "name": "合味道 大杯麵(極辛豬骨)", "units": [{"unit": "盒", "spec": "1X12杯"}, {"unit": "扎", "spec": "2盒X12杯"}]},
+            {"id": "p_1003002A", "code": "1003002-A", "barcode": "1003002-A", "categoryId": "cat_noodle", "name": "合味道 75g杯麵(海鮮)", "units": [{"unit": "箱", "spec": "1X24杯"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_1003002B", "code": "1003002-B", "barcode": "1003002-B", "categoryId": "cat_noodle", "name": "合味道 75g杯麵(香辣海鮮)", "units": [{"unit": "箱", "spec": "1X24杯"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_1003002C", "code": "1003002-C", "barcode": "1003002-C", "categoryId": "cat_noodle", "name": "合味道 75g杯麵(咖哩海鮮)", "units": [{"unit": "箱", "spec": "1X24杯"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_1003002D", "code": "1003002-D", "barcode": "1003002-D", "categoryId": "cat_noodle", "name": "合味道 75g杯麵(香辣牛肉)", "units": [{"unit": "箱", "spec": "1X24杯"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_1003002E", "code": "1003002-E", "barcode": "1003002-E", "categoryId": "cat_noodle", "name": "合味道 75g杯麵(五香牛肉)", "units": [{"unit": "箱", "spec": "1X24杯"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_1003002J", "code": "1003002-J", "barcode": "1003002-J", "categoryId": "cat_noodle", "name": "合味道 75g杯麵(黑胡椒蟹)", "units": [{"unit": "箱", "spec": "1X24杯"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_1003002K", "code": "1003002-K", "barcode": "1003002-K", "categoryId": "cat_noodle", "name": "合味道 75g杯麵(XO醬海鮮味)", "units": [{"unit": "箱", "spec": "1X24杯"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_1003002L", "code": "1003002-L", "barcode": "1003002-L", "categoryId": "cat_noodle", "name": "合味道 75g杯麵(周打蜆湯味)", "units": [{"unit": "箱", "spec": "1X24杯"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_1003002M", "code": "1003002-M", "barcode": "1003002-M", "categoryId": "cat_noodle", "name": "合味道 75g杯麵(法式龍蝦湯味)", "units": [{"unit": "箱", "spec": "1X24杯"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_1003002N", "code": "1003002-N", "barcode": "1003002-N", "categoryId": "cat_noodle", "name": "合味道 75g杯麵(鮮蝦鹽味)", "units": [{"unit": "箱", "spec": "75gX24杯"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_1003002P", "code": "1003002-P", "barcode": "1003002-P", "categoryId": "cat_noodle", "name": "合味道 75g杯麵(泰式咖哩蟹)", "units": [{"unit": "箱", "spec": "1X24杯"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_1005001A", "code": "1005001-A", "barcode": "1005001-A", "categoryId": "cat_noodle", "name": "四州湯麵 (紫菜)", "units": [{"unit": "箱", "spec": "1X30包"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1005001B", "code": "1005001-B", "barcode": "1005001-B", "categoryId": "cat_noodle", "name": "四州湯麵 (辣味)", "units": [{"unit": "箱", "spec": "1X30包"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1005001C", "code": "1005001-C", "barcode": "1005001-C", "categoryId": "cat_noodle", "name": "四州湯麵 (燉雞)", "units": [{"unit": "箱", "spec": "1X30包"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_1005001D", "code": "1005001-D", "barcode": "1005001-D", "categoryId": "cat_noodle", "name": "四州湯麵 (牛腩)", "units": [{"unit": "箱", "spec": "1X30包"}, {"unit": "個", "spec": ""}]},
             {"id": "p_1006001A", "code": "1006001-A", "barcode": "1006001-A", "categoryId": "cat_noodle", "name": "媽咪麵 (單包裝)", "units": [{"unit": "盒", "spec": "60gX40包"}, {"unit": "扎", "spec": "60gX40包X3箱"}]},
             {"id": "p_1006001B", "code": "1006001-B", "barcode": "1006001-B", "categoryId": "cat_noodle", "name": "媽咪麵 (五包裝)", "units": [{"unit": "盒", "spec": "60gX5包X8袋"}, {"unit": "扎", "spec": "5包X8袋X3箱"}]},
             {"id": "p_1007001C", "code": "1007001-C", "barcode": "1007001-C", "categoryId": "cat_noodle", "name": "童星 大闊條 (炒麵味)", "units": [{"unit": "箱", "spec": "110gX16包"}, {"unit": "個", "spec": ""}]},
@@ -1000,6 +1065,7 @@
             {"id": "p_110001F", "code": "110001-F", "barcode": "110001-F", "categoryId": "cat_gum", "name": "易極 (深綠薄荷)", "units": [{"unit": "盒", "spec": "1X8小盒"}, {"unit": "個", "spec": ""}]},
             {"id": "p_110001H", "code": "110001-H", "barcode": "110001-H", "categoryId": "cat_gum", "name": "易極 (粉紅草莓)", "units": [{"unit": "盒", "spec": "1X8小盒"}, {"unit": "個", "spec": ""}]},
             {"id": "p_110001I", "code": "110001-I", "barcode": "110001-I", "categoryId": "cat_gum", "name": "易極 (黃色檸檬)", "units": [{"unit": "盒", "spec": "1X8小盒"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_110002", "code": "110002", "barcode": "110002", "categoryId": "cat_gum", "name": "綠箭(15片裝)", "units": [{"unit": "盒", "spec": "15片X12條"}, {"unit": "箱", "spec": "15片X12條X16盒"}]},
             {"id": "p_110005H", "code": "110005-H", "barcode": "110005-H", "categoryId": "cat_gum", "name": "包裝 益達 (潔齒)", "units": [{"unit": "包", "spec": "20粒"}, {"unit": "盒", "spec": "20粒X30包"}]},
             {"id": "p_110005I", "code": "110005-I", "barcode": "110005-I", "categoryId": "cat_gum", "name": "包裝 益達 (檸檬)", "units": [{"unit": "包", "spec": "20粒"}, {"unit": "盒", "spec": "20粒X30包"}]},
             {"id": "p_110010A", "code": "110010-A", "barcode": "110010-A", "categoryId": "cat_gum", "name": "條裝 爽浪糖 (薄荷)", "units": [{"unit": "盒", "spec": "1X18條"}, {"unit": "個", "spec": ""}]},
@@ -1035,6 +1101,9 @@
             {"id": "p_120030B", "code": "120030-B", "barcode": "120030-B", "categoryId": "cat_jelly", "name": "24粒三色蒟蒻 (巨峰+青提+芒果)", "units": [{"unit": "包", "spec": "432g"}, {"unit": "箱", "spec": "432gX12包"}]},
             {"id": "p_21001A", "code": "21001-A", "barcode": "21001-A", "categoryId": "cat_chips", "name": "栗米球 (大)", "units": [{"unit": "箱", "spec": "75gX12包"}, {"unit": "個", "spec": ""}]},
             {"id": "p_21001B", "code": "21001-B", "barcode": "21001-B", "categoryId": "cat_chips", "name": "栗米球 (小)", "units": [{"unit": "箱", "spec": "20gX30包"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_21002A", "code": "21002-A", "barcode": "21002-A", "categoryId": "cat_chips", "name": "山葯薄片(烤翅味)", "units": [{"unit": "袋", "spec": "90gX10包"}, {"unit": "箱", "spec": "90gX10包X8袋"}]},
+            {"id": "p_21002B", "code": "21002-B", "barcode": "21002-B", "categoryId": "cat_chips", "name": "山葯薄片(海苔味)", "units": [{"unit": "袋", "spec": "90gX10包"}, {"unit": "箱", "spec": "90gX10包X8袋"}]},
+            {"id": "p_21002C", "code": "21002-C", "barcode": "21002-C", "categoryId": "cat_chips", "name": "山葯薄片(番茄味)", "units": [{"unit": "袋", "spec": "90gX10包"}, {"unit": "箱", "spec": "90gX10包X8袋"}]},
             {"id": "p_21003", "code": "21003", "barcode": "21003", "categoryId": "cat_chips", "name": "22g WISE茄汁薯片(包裝)", "units": [{"unit": "袋", "spec": "22gX30"}, {"unit": "箱", "spec": ""}]},
             {"id": "p_21004", "code": "21004", "barcode": "21004", "categoryId": "cat_chips", "name": "WISE 茄汁薯片(罐裝)", "units": [{"unit": "箱", "spec": "100gX12罐"}, {"unit": "個", "spec": ""}]},
             {"id": "p_21004B", "code": "21004-B", "barcode": "21004-B", "categoryId": "cat_chips", "name": "WISE 辣味茄汁薯片(罐裝)", "units": [{"unit": "箱", "spec": "100gX12罐"}, {"unit": "個", "spec": ""}]},
@@ -1112,6 +1181,10 @@
             {"id": "p_2635", "code": "2635", "barcode": "2635", "categoryId": "cat_chips", "name": "卡樂B 4連包番茄什菜薯條", "units": [{"unit": "箱", "spec": "4小包X20條"}, {"unit": "個", "spec": ""}]},
             {"id": "p_2636", "code": "2636", "barcode": "2636", "categoryId": "cat_chips", "name": "卡樂B 4連包脆格薯片", "units": [{"unit": "箱", "spec": "4小包X20條"}, {"unit": "個", "spec": ""}]},
             {"id": "p_2637", "code": "2637", "barcode": "2637", "categoryId": "cat_chips", "name": "卡樂B 4連包和風蝦條", "units": [{"unit": "箱", "spec": "4小包X20條"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_2641A", "code": "2641-A", "barcode": "2641-A", "categoryId": "cat_chips", "name": "卡樂B 25g薯片(燒烤味)", "units": [{"unit": "箱", "spec": "25gX30包"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_2641B", "code": "2641-B", "barcode": "2641-B", "categoryId": "cat_chips", "name": "卡樂B 25g薯片(熱浪香辣)", "units": [{"unit": "箱", "spec": "25gX30包"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_2641C", "code": "2641-C", "barcode": "2641-C", "categoryId": "cat_chips", "name": "卡樂B 25g薯片(咖喱味)", "units": [{"unit": "箱", "spec": "25gX30包"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_2641D", "code": "2641-D", "barcode": "2641-D", "categoryId": "cat_chips", "name": "卡樂B 25g薯片(紫菜味)", "units": [{"unit": "箱", "spec": "25gX30包"}, {"unit": "個", "spec": ""}]},
             {"id": "p_2642A", "code": "2642-A", "barcode": "2642-A", "categoryId": "cat_chips", "name": "卡樂B 55g薯片(燒烤味)", "units": [{"unit": "箱", "spec": "55gX24包"}, {"unit": "個", "spec": ""}]},
             {"id": "p_2642B", "code": "2642-B", "barcode": "2642-B", "categoryId": "cat_chips", "name": "卡樂B 55g薯片(熱浪香辣)", "units": [{"unit": "箱", "spec": "55gX24包"}, {"unit": "個", "spec": ""}]},
             {"id": "p_2642C", "code": "2642-C", "barcode": "2642-C", "categoryId": "cat_chips", "name": "卡樂B 55g薯片(咖喱味)", "units": [{"unit": "箱", "spec": "55gX24包"}, {"unit": "個", "spec": ""}]},
@@ -1301,6 +1374,11 @@
             {"id": "p_412001G", "code": "412001-G", "barcode": "412001-G", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(芝士夾心)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": "1X8盒X10條"}]},
             {"id": "p_412001H", "code": "412001-H", "barcode": "412001-H", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(蝦片)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": "1X8盒X10條"}]},
             {"id": "p_414000A", "code": "414000-A", "barcode": "414000-A", "categoryId": "cat_biscuit", "name": "麥維他 迷你裝消化餅(18裝)", "units": [{"unit": "盒", "spec": "35gx12筒"}, {"unit": "箱", "spec": "35gx12筒X18盒"}]},
+            {"id": "p_414002", "code": "414002", "barcode": "414002", "categoryId": "cat_biscuit", "name": "麥維他 250g消化餅", "units": [{"unit": "箱", "spec": "250gX24條"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_415010A", "code": "415010-A", "barcode": "415010-A", "categoryId": "cat_biscuit", "name": "能量99棒 (蛋黃口味)", "units": [{"unit": "袋", "spec": "180g"}, {"unit": "箱", "spec": "180gX12袋"}]},
+            {"id": "p_415010B", "code": "415010-B", "barcode": "415010-B", "categoryId": "cat_biscuit", "name": "能量99棒 (芋頭口味)", "units": [{"unit": "袋", "spec": "180g"}, {"unit": "箱", "spec": "180gX12袋"}]},
+            {"id": "p_415010C", "code": "415010-C", "barcode": "415010-C", "categoryId": "cat_biscuit", "name": "能量99棒 (南瓜口味)", "units": [{"unit": "袋", "spec": "180g"}, {"unit": "箱", "spec": "180gX12袋"}]},
+            {"id": "p_415010D", "code": "415010-D", "barcode": "415010-D", "categoryId": "cat_biscuit", "name": "能量99棒 (芝麻口味)", "units": [{"unit": "袋", "spec": "160g"}, {"unit": "箱", "spec": "160gX12袋"}]},
             {"id": "p_415010E", "code": "415010-E", "barcode": "415010-E", "categoryId": "cat_biscuit", "name": "蒟蒻糙米卷 (海苔口味)", "units": [{"unit": "袋", "spec": "160g"}, {"unit": "箱", "spec": "160gX12袋"}]},
             {"id": "p_416001A", "code": "416001-A", "barcode": "416001-A", "categoryId": "cat_biscuit", "name": "包裝動物餅(紫菜)", "units": [{"unit": "箱", "spec": "10袋X144g"}, {"unit": "個", "spec": ""}]},
             {"id": "p_416001B", "code": "416001-B", "barcode": "416001-B", "categoryId": "cat_biscuit", "name": "包裝動物餅(牛油)", "units": [{"unit": "箱", "spec": "10袋X144g"}, {"unit": "個", "spec": ""}]},
@@ -1308,6 +1386,14 @@
             {"id": "p_416002B", "code": "416002-B", "barcode": "416002-B", "categoryId": "cat_biscuit", "name": "盒裝動物餅(牛油)", "units": [{"unit": "箱", "spec": "37gX24盒"}, {"unit": "個", "spec": ""}]},
             {"id": "p_417001A", "code": "417001-A", "barcode": "417001-A", "categoryId": "cat_biscuit", "name": "太平梳打餅 (奶鹽)", "units": [{"unit": "箱", "spec": "100gX36包"}, {"unit": "箱", "spec": ""}]},
             {"id": "p_417001B", "code": "417001-B", "barcode": "417001-B", "categoryId": "cat_biscuit", "name": "太平梳打餅 (芝麻)", "units": [{"unit": "箱", "spec": "100gX36包"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_417001C", "code": "417001-C", "barcode": "417001-C", "categoryId": "cat_biscuit", "name": "太平梳打餅 (香蔥)", "units": [{"unit": "箱", "spec": "100gX36包"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_42001A", "code": "42001-A", "barcode": "42001-A", "categoryId": "cat_biscuit", "name": "阿波羅 威化蛋卷(朱古力)", "units": [{"unit": "盒", "spec": "1盒X30包"}, {"unit": "箱", "spec": "1X24盒"}]},
+            {"id": "p_42001C", "code": "42001-C", "barcode": "42001-C", "categoryId": "cat_biscuit", "name": "阿波羅 威化蛋卷(草莓)", "units": [{"unit": "盒", "spec": "1盒X30包"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_42002A", "code": "42002-A", "barcode": "42002-A", "categoryId": "cat_biscuit", "name": "阿波羅 紅格威化", "units": [{"unit": "盒", "spec": "1盒X24包"}, {"unit": "箱", "spec": "1X12盒"}]},
+            {"id": "p_42002B", "code": "42002-B", "barcode": "42002-B", "categoryId": "cat_biscuit", "name": "阿波羅 黃格威化", "units": [{"unit": "盒", "spec": "1X24包"}, {"unit": "箱", "spec": "1X12盒X24包"}]},
+            {"id": "p_42002C", "code": "42002-C", "barcode": "42002-C", "categoryId": "cat_biscuit", "name": "阿波羅 蛋糕 (班蘭味)", "units": [{"unit": "盒", "spec": "1盒X8包"}, {"unit": "箱", "spec": "1X20盒"}]},
+            {"id": "p_42002D", "code": "42002-D", "barcode": "42002-D", "categoryId": "cat_biscuit", "name": "阿波羅 蛋糕 (班蘭椰子味)", "units": [{"unit": "盒", "spec": "1盒X8包"}, {"unit": "箱", "spec": "1X20盒"}]},
+            {"id": "p_42002G", "code": "42002-G", "barcode": "42002-G", "categoryId": "cat_biscuit", "name": "阿波羅 蛋糕 (原味)", "units": [{"unit": "盒", "spec": "1盒X8包"}, {"unit": "箱", "spec": "1X20盒"}]},
             {"id": "p_43001B", "code": "43001-B", "barcode": "43001-B", "categoryId": "cat_biscuit", "name": "樂天 家庭裝熊仔餅 (草莓)", "units": [{"unit": "筒", "spec": "1X10小包"}, {"unit": "箱", "spec": "1X10筒X10小包"}]},
             {"id": "p_43002A", "code": "43002-A", "barcode": "43002-A", "categoryId": "cat_biscuit", "name": "樂天 六筒裝熊仔餅 (朱古力)", "units": [{"unit": "盒", "spec": "1X6筒"}, {"unit": "箱", "spec": "1X8盒X6筒"}]},
             {"id": "p_43002B", "code": "43002-B", "barcode": "43002-B", "categoryId": "cat_biscuit", "name": "樂天 六筒裝熊仔餅 (草莓)", "units": [{"unit": "盒", "spec": "1X6筒"}, {"unit": "箱", "spec": "1X8盒X6筒"}]},
@@ -1368,6 +1454,7 @@
             {"id": "p_50009", "code": "50009", "barcode": "50009", "categoryId": "cat_chips", "name": "旺旺 雪餅經濟包(400g)", "units": [{"unit": "箱", "spec": "400gX6袋"}, {"unit": "個", "spec": ""}]},
             {"id": "p_50010", "code": "50010", "barcode": "50010", "categoryId": "cat_chips", "name": "旺旺 燒米餅(72g)", "units": [{"unit": "箱", "spec": "72gX20包"}, {"unit": "個", "spec": ""}]},
             {"id": "p_50011", "code": "50011", "barcode": "50011", "categoryId": "cat_chips", "name": "林真香脆豬肉卷", "units": [{"unit": "包", "spec": "120g"}, {"unit": "箱", "spec": "120gX24包"}]},
+            {"id": "p_50012", "code": "50012", "barcode": "50012", "categoryId": "cat_chips", "name": "座山豬肉紙", "units": [{"unit": "包", "spec": "70g"}, {"unit": "箱", "spec": "70gX30包"}]},
             {"id": "p_50013", "code": "50013", "barcode": "50013", "categoryId": "cat_chips", "name": "座山飯蕉 (30裝)", "units": [{"unit": "箱", "spec": "30包X115g"}, {"unit": "個", "spec": ""}]},
             {"id": "p_50015A", "code": "50015-A", "barcode": "50015-A", "categoryId": "cat_chips", "name": "日清穀麥麥片 (果實)", "units": [{"unit": "包", "spec": ""}, {"unit": "箱", "spec": "1X12包"}]},
             {"id": "p_50015B", "code": "50015-B", "barcode": "50015-B", "categoryId": "cat_chips", "name": "日清穀麥麥片 (綠茶)", "units": [{"unit": "包", "spec": ""}, {"unit": "箱", "spec": "1X12包"}]},
@@ -1392,6 +1479,7 @@
             {"id": "p_60013I", "code": "60013-I", "barcode": "60013-I", "categoryId": "cat_meat", "name": "華園 柱侯齋燒鵝(80g)", "units": [{"unit": "袋", "spec": "80gX10包"}, {"unit": "箱", "spec": ""}]},
             {"id": "p_60013J", "code": "60013-J", "barcode": "60013-J", "categoryId": "cat_meat", "name": "華園 柱侯齋燒鵝(40g)", "units": [{"unit": "袋", "spec": "40gX10包"}, {"unit": "箱", "spec": ""}]},
             {"id": "p_60020", "code": "60020", "barcode": "60020", "categoryId": "cat_meat", "name": "方形魚片", "units": [{"unit": "包", "spec": "1箱X50包"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_60021A", "code": "60021-A", "barcode": "60021-A", "categoryId": "cat_nut", "name": "NO.1 開心果", "units": [{"unit": "包", "spec": "1磅"}, {"unit": "箱", "spec": "22磅"}]},
             {"id": "p_60022A", "code": "60022-A", "barcode": "60022-A", "categoryId": "cat_nut", "name": "香脆豆 (什錦果仁) (罐裝)", "units": [{"unit": "箱", "spec": "243gX24罐"}, {"unit": "個", "spec": ""}]},
             {"id": "p_60022E", "code": "60022-E", "barcode": "60022-E", "categoryId": "cat_nut", "name": "香脆豆 (魚仔花生)(散裝)", "units": [{"unit": "袋", "spec": "1kg"}, {"unit": "箱", "spec": "1kgX5袋"}]},
             {"id": "p_60022F", "code": "60022-F", "barcode": "60022-F", "categoryId": "cat_nut", "name": "香脆豆 (什豆果仁) (散裝)", "units": [{"unit": "袋", "spec": "1kg"}, {"unit": "箱", "spec": "1kgX5袋"}]},
@@ -1399,6 +1487,7 @@
             {"id": "p_60023A", "code": "60023-A", "barcode": "60023-A", "categoryId": "cat_nut", "name": "魚仔米果花生 (20小包)", "units": [{"unit": "包", "spec": "200g"}, {"unit": "箱", "spec": "200gX12包"}]},
             {"id": "p_60023B", "code": "60023-B", "barcode": "60023-B", "categoryId": "cat_nut", "name": "香脆豆 (什錦果仁) (20小包)", "units": [{"unit": "包", "spec": "250g"}, {"unit": "箱", "spec": "250gX12包"}]},
             {"id": "p_61001", "code": "61001", "barcode": "61001", "categoryId": "cat_meat", "name": "大洋腸(細包)", "units": [{"unit": "盒", "spec": "22gX30條"}, {"unit": "箱", "spec": "1X16盒"}]},
+            {"id": "p_61002A", "code": "61002-A", "barcode": "61002-A", "categoryId": "cat_meat", "name": "5+1支裝大洋腸 (蒜辣)", "units": [{"unit": "箱", "spec": "6條X30扎"}, {"unit": "扎", "spec": "30扎X2箱"}]},
             {"id": "p_61002C", "code": "61002-C", "barcode": "61002-C", "categoryId": "cat_meat", "name": "5+1支裝大洋腸 (原味)", "units": [{"unit": "箱", "spec": "6條X30扎"}, {"unit": "扎", "spec": "30扎X2箱"}]},
             {"id": "p_61002D", "code": "61002-D", "barcode": "61002-D", "categoryId": "cat_meat", "name": "大洋珍寶腸", "units": [{"unit": "盒", "spec": "1X12條"}, {"unit": "扎", "spec": "1X4盒X12條"}]},
             {"id": "p_61003", "code": "61003", "barcode": "61003", "categoryId": "cat_meat", "name": "媽媽大洋腸", "units": [{"unit": "盒", "spec": "1盒X3條X20扎"}, {"unit": "扎", "spec": ""}]},
@@ -1424,6 +1513,8 @@
             {"id": "p_62023D", "code": "62023-D", "barcode": "62023-D", "categoryId": "cat_meat", "name": "手撕素牛排 (泡椒味)", "units": [{"unit": "盒", "spec": "20包"}, {"unit": "箱", "spec": ""}]},
             {"id": "p_62025A", "code": "62025-A", "barcode": "62025-A", "categoryId": "cat_meat", "name": "龍岩泡鴨翅", "units": [{"unit": "袋", "spec": "30包"}, {"unit": "箱", "spec": ""}]},
             {"id": "p_62025B", "code": "62025-B", "barcode": "62025-B", "categoryId": "cat_meat", "name": "龍岩泡鴨爪", "units": [{"unit": "袋", "spec": "30包"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_62025J3", "code": "62025-J3", "barcode": "62025-J3", "categoryId": "cat_meat", "name": "虎皮鳳爪(原味)", "units": [{"unit": "袋", "spec": "50包"}, {"unit": "箱", "spec": ""}]},
+            {"id": "p_62025J4", "code": "62025-J4", "barcode": "62025-J4", "categoryId": "cat_meat", "name": "虎皮鳳爪(香辣味)", "units": [{"unit": "袋", "spec": "50包"}, {"unit": "箱", "spec": ""}]},
             {"id": "p_62025K", "code": "62025-K", "barcode": "62025-K", "categoryId": "cat_meat", "name": "醬香雞爪 (紅)", "units": [{"unit": "袋", "spec": "30包"}, {"unit": "箱", "spec": ""}]},
             {"id": "p_62025M", "code": "62025-M", "barcode": "62025-M", "categoryId": "cat_meat", "name": "醬香雞爪 (黃)", "units": [{"unit": "袋", "spec": "30包"}, {"unit": "箱", "spec": ""}]},
             {"id": "p_62027A", "code": "62027-A", "barcode": "62027-A", "categoryId": "cat_meat", "name": "衛龍 106g大面筋", "units": [{"unit": "包", "spec": "106g"}, {"unit": "箱", "spec": "106gX60包"}]},
@@ -1466,6 +1557,8 @@
             {"id": "p_62046A", "code": "62046-A", "barcode": "62046-A", "categoryId": "cat_meat", "name": "親嘴燒 (紅色)", "units": [{"unit": "盒", "spec": "30包X2盒"}, {"unit": "個", "spec": ""}]},
             {"id": "p_62046B", "code": "62046-B", "barcode": "62046-B", "categoryId": "cat_meat", "name": "親嘴燒 (綠色)", "units": [{"unit": "盒", "spec": "30包X2盒"}, {"unit": "個", "spec": ""}]},
             {"id": "p_62046C", "code": "62046-C", "barcode": "62046-C", "categoryId": "cat_meat", "name": "親嘴燒 (黃色)", "units": [{"unit": "盒", "spec": "30包X2盒"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_62048A", "code": "62048-A", "barcode": "62048-A", "categoryId": "cat_meat", "name": "螺絲粉 (香辣味)", "units": [{"unit": "盒", "spec": "20包"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_62048B", "code": "62048-B", "barcode": "62048-B", "categoryId": "cat_meat", "name": "螺絲粉 (酸辣味)", "units": [{"unit": "盒", "spec": "20包"}, {"unit": "個", "spec": ""}]},
             {"id": "p_63001", "code": "63001", "barcode": "63001", "categoryId": "cat_nut", "name": "萬里脆 80g 細花生", "units": [{"unit": "袋", "spec": "80gX30包"}, {"unit": "箱", "spec": "80gX30包X4袋"}]},
             {"id": "p_63002", "code": "63002", "barcode": "63002", "categoryId": "cat_nut", "name": "萬里脆 160g 中花生", "units": [{"unit": "袋", "spec": "160gX20包"}, {"unit": "箱", "spec": "160gX20包X3袋"}]},
             {"id": "p_63003", "code": "63003", "barcode": "63003", "categoryId": "cat_nut", "name": "萬里脆 320g 大花生", "units": [{"unit": "袋", "spec": "320gX10包"}, {"unit": "箱", "spec": "320gX10包X3袋"}]},
@@ -1483,6 +1576,7 @@
             {"id": "p_63011", "code": "63011", "barcode": "63011", "categoryId": "cat_nut", "name": "虎嘜 花生", "units": [{"unit": "袋", "spec": "75斤"}, {"unit": "袋", "spec": ""}]},
             {"id": "p_63012", "code": "63012", "barcode": "63012", "categoryId": "cat_nut", "name": "散裝咸乾花生", "units": [{"unit": "袋", "spec": "35公斤"}, {"unit": "個", "spec": ""}]},
             {"id": "p_63014", "code": "63014", "barcode": "63014", "categoryId": "cat_nut", "name": "散裝蒜味花生", "units": [{"unit": "小袋", "spec": "5kg"}, {"unit": "袋", "spec": "5kgX5袋"}]},
+            {"id": "p_63017", "code": "63017", "barcode": "63017", "categoryId": "cat_nut", "name": "華園 魚皮花生", "units": [{"unit": "袋", "spec": "1X10"}, {"unit": "個", "spec": ""}]},
             {"id": "p_63018", "code": "63018", "barcode": "63018", "categoryId": "cat_nut", "name": "華園 蝦子花生", "units": [{"unit": "袋", "spec": "1X10"}, {"unit": "個", "spec": ""}]},
             {"id": "p_640002", "code": "640002", "barcode": "640002", "categoryId": "cat_nut", "name": "壽司紫菜", "units": [{"unit": "包", "spec": "1包X10小包"}, {"unit": "箱", "spec": "1箱X6包"}]},
             {"id": "p_6410A", "code": "6410-A", "barcode": "6410-A", "categoryId": "cat_nut", "name": "小老板 包裝卷紫菜", "units": [{"unit": "袋", "spec": "3gX12條"}, {"unit": "箱", "spec": "3gX12條X12袋"}]},
@@ -1507,6 +1601,16 @@
             {"id": "p_6417B", "code": "6417-B", "barcode": "6417-B", "categoryId": "cat_nut", "name": "小老板 6片裝紫菜 (辣味)", "units": [{"unit": "箱", "spec": "6片X24包"}, {"unit": "箱", "spec": "6片X30包"}]},
             {"id": "p_6417C", "code": "6417-C", "barcode": "6417-C", "categoryId": "cat_nut", "name": "小老板 6片裝紫菜 (海鮮)", "units": [{"unit": "箱", "spec": "6片X24包"}, {"unit": "箱", "spec": "6片X30包"}]},
             {"id": "p_6417D", "code": "6417-D", "barcode": "6417-D", "categoryId": "cat_nut", "name": "小老板 6片裝紫菜 (醬油)", "units": [{"unit": "箱", "spec": "6片X24包"}, {"unit": "箱", "spec": "6片X30包"}]},
+            {"id": "p_642001A", "code": "642001-A", "barcode": "642001-A", "categoryId": "cat_nut", "name": "四州 50束紫菜(原味)", "units": [{"unit": "包", "spec": "1包X50小束"}, {"unit": "箱", "spec": "12包X50小束"}]},
+            {"id": "p_642001C", "code": "642001-C", "barcode": "642001-C", "categoryId": "cat_nut", "name": "四州 50束紫菜(芥辣味)", "units": [{"unit": "包", "spec": "1包X50小束"}, {"unit": "箱", "spec": "12包X50小束"}]},
+            {"id": "p_642001D", "code": "642001-D", "barcode": "642001-D", "categoryId": "cat_nut", "name": "四州 50束紫菜(蕃茄味)", "units": [{"unit": "包", "spec": "1包X50小束"}, {"unit": "箱", "spec": "12包X50小束"}]},
+            {"id": "p_642002A", "code": "642002-A", "barcode": "642002-A", "categoryId": "cat_nut", "name": "四州 100束紫菜(原味)", "units": [{"unit": "包", "spec": "1包X100小束"}, {"unit": "箱", "spec": "8包X100小束"}]},
+            {"id": "p_642002B", "code": "642002-B", "barcode": "642002-B", "categoryId": "cat_nut", "name": "四州 100束紫菜(辣味)", "units": [{"unit": "包", "spec": "1包X100小束"}, {"unit": "箱", "spec": "8包X100小束"}]},
+            {"id": "p_642002C", "code": "642002-C", "barcode": "642002-C", "categoryId": "cat_nut", "name": "四州 100束紫菜(芥辣味)", "units": [{"unit": "包", "spec": "1包X100小束"}, {"unit": "箱", "spec": "8包X100小束"}]},
+            {"id": "p_642002D", "code": "642002-D", "barcode": "642002-D", "categoryId": "cat_nut", "name": "四州 24束紫菜(原味)", "units": [{"unit": "包", "spec": "18g"}, {"unit": "箱", "spec": "18gX16包"}]},
+            {"id": "p_642003A", "code": "642003-A", "barcode": "642003-A", "categoryId": "cat_nut", "name": "四州 大片裝紫菜(原味)", "units": [{"unit": "袋", "spec": "1袋X16包"}, {"unit": "箱", "spec": "1箱X3袋X16包"}]},
+            {"id": "p_642003B", "code": "642003-B", "barcode": "642003-B", "categoryId": "cat_nut", "name": "四州 大片裝紫菜(辣味)", "units": [{"unit": "袋", "spec": "1袋X16包"}, {"unit": "箱", "spec": "1箱X3袋X16包"}]},
+            {"id": "p_642003C", "code": "642003-C", "barcode": "642003-C", "categoryId": "cat_nut", "name": "四州 大片裝紫菜(芥辣味)", "units": [{"unit": "袋", "spec": "1袋X16包"}, {"unit": "箱", "spec": "1箱X3袋X16包"}]},
             {"id": "p_643001A", "code": "643001-A", "barcode": "643001-A", "categoryId": "cat_nut", "name": "對切紫菜 (原味)", "units": [{"unit": "包", "spec": "1包"}, {"unit": "箱", "spec": "1箱X30包"}]},
             {"id": "p_643001B", "code": "643001-B", "barcode": "643001-B", "categoryId": "cat_nut", "name": "對切紫菜 (辣味)", "units": [{"unit": "包", "spec": "1包"}, {"unit": "箱", "spec": "1箱X30包"}]},
             {"id": "p_643001C", "code": "643001-C", "barcode": "643001-C", "categoryId": "cat_nut", "name": "對切紫菜 (芥辣)", "units": [{"unit": "包", "spec": "1包"}, {"unit": "箱", "spec": "1箱X30包"}]},
@@ -1530,6 +1634,7 @@
             {"id": "p_6512C", "code": "6512-C", "barcode": "6512-C", "categoryId": "cat_meat", "name": "超味魷魚 排裝 (紅色)", "units": [{"unit": "排", "spec": "6gX12包"}, {"unit": "箱", "spec": "12包X24排"}]},
             {"id": "p_6531B", "code": "6531-B", "barcode": "6531-B", "categoryId": "cat_meat", "name": "大發 8g 鱈魚絲", "units": [{"unit": "袋", "spec": "1袋X30包"}]},
             {"id": "p_6535", "code": "6535", "barcode": "6535", "categoryId": "cat_meat", "name": "泰國長魷魚片", "units": [{"unit": "箱", "spec": "1X24片"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_70001", "code": "70001", "barcode": "70001", "categoryId": "cat_biscuit", "name": "壽粒粒紅豆銅鑼燒餅", "units": [{"unit": "箱", "spec": "295gX8包"}, {"unit": "個", "spec": ""}]},
             {"id": "p_70005A", "code": "70005-A", "barcode": "70005-A", "categoryId": "cat_biscuit", "name": "EDO 朱古力批", "units": [{"unit": "箱", "spec": "1箱X8盒X10件"}, {"unit": "個", "spec": ""}]},
             {"id": "p_70005B", "code": "70005-B", "barcode": "70005-B", "categoryId": "cat_biscuit", "name": "EDO 士多啤梨批", "units": [{"unit": "箱", "spec": "1箱X8盒X10件"}, {"unit": "個", "spec": ""}]},
             {"id": "p_70005C", "code": "70005-C", "barcode": "70005-C", "categoryId": "cat_biscuit", "name": "EDO 香蕉朱古力批", "units": [{"unit": "箱", "spec": "1箱X8盒X10件"}, {"unit": "個", "spec": ""}]},
@@ -1540,6 +1645,7 @@
             {"id": "p_803009G", "code": "803009-G", "barcode": "803009-G", "categoryId": "cat_candy", "name": "法國咖啡糖 (6袋裝)", "units": [{"unit": "袋", "spec": "2kg"}, {"unit": "箱", "spec": "2kgX6袋"}]},
             {"id": "p_90002B", "code": "90002-B", "barcode": "90002-B", "categoryId": "cat_plum", "name": "時興隆 金梅片(檸檬味)", "units": [{"unit": "盒", "spec": "55gX12瓶"}, {"unit": "箱", "spec": "55gX12瓶X12盒"}]},
             {"id": "p_90007", "code": "90007", "barcode": "90007", "categoryId": "cat_plum", "name": "九製 陳皮", "units": [{"unit": "袋", "spec": "1袋X20包X30g"}, {"unit": "箱", "spec": "20包X30g"}]},
+            {"id": "p_90009A", "code": "90009-A", "barcode": "90009-A", "categoryId": "cat_plum", "name": "泰國原個芒果 (原味)", "units": [{"unit": "箱", "spec": "180gX30個"}, {"unit": "個", "spec": ""}]},
             {"id": "p_90011", "code": "90011", "barcode": "90011", "categoryId": "cat_plum", "name": "柏盈 五彩柑橘", "units": [{"unit": "排", "spec": "1盒X12瓶"}, {"unit": "箱", "spec": "12瓶X50排"}]},
             {"id": "p_90013", "code": "90013", "barcode": "90013", "categoryId": "cat_plum", "name": "同心想 筒裝話梅", "units": [{"unit": "袋", "spec": "1X10罐"}, {"unit": "箱", "spec": "1X40罐"}]},
             {"id": "p_90018A", "code": "90018-A", "barcode": "90018-A", "categoryId": "cat_plum", "name": "小貝京 束裝大梅棒(原味)", "units": [{"unit": "盒", "spec": "10支X12束"}, {"unit": "箱", "spec": "1箱X4盒"}]},
@@ -1552,9 +1658,9 @@
         ];
 
         const STORAGE_KEYS = {
-            UNITS: 'hhy_noprice_units_v6',
-            CATEGORIES: 'hhy_noprice_categories_v6',
-            PRODUCTS: 'hhy_noprice_products_v6',
+            UNITS: 'hhy_noprice_units_v5',
+            CATEGORIES: 'hhy_noprice_categories_v5',
+            PRODUCTS: 'hhy_noprice_products_v5',
             CART: 'hhy_noprice_cart_v3',
             WA_PHONE: 'hhy_noprice_wa_phone_v3'
         };
@@ -1575,6 +1681,7 @@
         let selectedCategory = 'ALL';
         let searchQuery = '';
         let selectedUnitsMap = {};
+        let sortMode = 'DEFAULT'; // DEFAULT | CODE_ASC | CODE_DESC | NAME_ASC | CART_FIRST
 
         let mediaStream = null;
         let scanLoopId = null;
@@ -1685,8 +1792,25 @@
             renderProducts();
         }
 
+        function toggleQuickSort() {
+            const order = ['DEFAULT', 'CODE_ASC', 'CODE_DESC', 'NAME_ASC', 'CART_FIRST'];
+            const labels = {
+                DEFAULT: '排序：預設',
+                CODE_ASC: '編號：由小至大 ↑',
+                CODE_DESC: '編號：由大至小 ↓',
+                NAME_ASC: '名稱：筆劃/字母 ↑',
+                CART_FIRST: '已點選貨品優先 ★'
+            };
+            const nextIdx = (order.indexOf(sortMode) + 1) % order.length;
+            sortMode = order[nextIdx];
+            const labelEl = document.getElementById('quickSortLabel');
+            if (labelEl) labelEl.textContent = labels[sortMode];
+            renderProducts();
+            showToast(`已切換為「${labels[sortMode]}」`);
+        }
+
         function getFilteredProducts() {
-            return products.filter(p => {
+            const list = products.filter(p => {
                 if (selectedCategory !== 'ALL' && p.categoryId !== selectedCategory) return false;
                 if (!searchQuery) return true;
                 return (
@@ -1695,6 +1819,25 @@
                     (p.barcode && p.barcode.toLowerCase().includes(searchQuery))
                 );
             });
+
+            if (sortMode === 'CODE_ASC') {
+                return [...list].sort((a, b) => a.code.localeCompare(b.code, 'zh-HK', { numeric: true }));
+            }
+            if (sortMode === 'CODE_DESC') {
+                return [...list].sort((a, b) => b.code.localeCompare(a.code, 'zh-HK', { numeric: true }));
+            }
+            if (sortMode === 'NAME_ASC') {
+                return [...list].sort((a, b) => a.name.localeCompare(b.name, 'zh-HK', { numeric: true }));
+            }
+            if (sortMode === 'CART_FIRST') {
+                return [...list].sort((a, b) => {
+                    const aQty = cart.filter(c => c.productId === a.id).reduce((s, c) => s + c.qty, 0);
+                    const bQty = cart.filter(c => c.productId === b.id).reduce((s, c) => s + c.qty, 0);
+                    if ((bQty > 0) !== (aQty > 0)) return bQty > 0 ? 1 : -1;
+                    return a.code.localeCompare(b.code, 'zh-HK', { numeric: true });
+                });
+            }
+            return list;
         }
 
         function renderProducts() {
@@ -1733,7 +1876,10 @@
                                 <span class="code-badge">${escapeHtml(p.code)}</span>
                                 ${p.barcode && p.barcode !== p.code ? `<span class="barcode-tag">[${escapeHtml(p.barcode)}]</span>` : ''}
                             </div>
-                            <span class="cat-tag">${escapeHtml(catName)}</span>
+                            <div style="display:flex;align-items:center;gap:5px;">
+                                <span class="cat-tag">${escapeHtml(catName)}</span>
+                                <button type="button" class="btn-card-edit" onclick="quickEditProduct('${p.id}')" title="直接修改此貨品">修改</button>
+                            </div>
                         </div>
                         <div class="product-name">${escapeHtml(p.name)}</div>
                     </div>
@@ -2362,6 +2508,12 @@
             renderManageProductList();
             renderCategoryTabs();
             renderProducts();
+        }
+
+        function quickEditProduct(productId) {
+            openManageModal();
+            switchManageTab('products');
+            editProduct(productId);
         }
 
         function editProduct(productId) {
