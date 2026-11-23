@@ -145,6 +145,20 @@
             padding: 0 2px; gap: 8px; flex-wrap: wrap;
         }
 
+
+        .sort-bar {
+            display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+        }
+        .sort-btn {
+            padding: 4px 10px; border-radius: var(--radius-full); font-size: 12px;
+            font-weight: 700; background: #ffffff; color: var(--text-muted);
+            border: 1px solid var(--border-strong); box-shadow: var(--shadow-sm);
+        }
+        .sort-btn:hover { background: var(--brand-light); color: var(--brand-dark); }
+        .sort-btn.active {
+            background: var(--brand); color: #ffffff; border-color: var(--brand);
+        }
+
         .badge-noprice {
             background: #e2e8f0; color: #334155; padding: 2px 8px;
             border-radius: var(--radius-full); font-weight: 700; font-size: 11px;
@@ -408,7 +422,12 @@
     <main class="main-container">
         <div class="status-strip">
             <span id="productCountText">載入中...</span>
-            <span class="badge-noprice">無價錢版 · 自由增刪貨品/種類/單位</span>
+            <div class="sort-bar">
+                <span style="font-size:12px;font-weight:700;color:var(--text-muted);">一按排序：</span>
+                <button type="button" id="sortBtnDefault" class="sort-btn active" onclick="toggleSortMode('default')">預設</button>
+                <button type="button" id="sortBtnCode" class="sort-btn" onclick="toggleSortMode('code')">編號 ↑</button>
+                <button type="button" id="sortBtnName" class="sort-btn" onclick="toggleSortMode('name')">名稱 ↑</button>
+            </div>
         </div>
 
         <div id="productGrid" class="product-grid"></div>
@@ -599,9 +618,13 @@
                         </form>
                     </div>
 
-                    <div class="flex-between" style="margin-bottom:8px;flex-wrap:wrap;">
+                    <div class="flex-between" style="margin-bottom:8px;flex-wrap:wrap;gap:6px;">
                         <span style="font-size:13px;font-weight:700;">現有貨品列表 (<span id="manageProdCount">0</span>)</span>
-                        <input type="text" id="manageSearchInput" class="form-control" style="max-width:240px;padding:6px 10px;font-size:13px;" oninput="renderManageProductList()" placeholder="篩選編號或名稱...">
+                        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                            <button type="button" id="manageSortBtnCode" class="sort-btn" onclick="toggleSortMode('code')">按編號</button>
+                            <button type="button" id="manageSortBtnName" class="sort-btn" onclick="toggleSortMode('name')">按名稱</button>
+                            <input type="text" id="manageSearchInput" class="form-control" style="max-width:200px;padding:6px 10px;font-size:13px;" oninput="renderManageProductList()" placeholder="篩選編號或名稱...">
+                        </div>
                     </div>
                     <div id="manageProductList"></div>
                 </div>
@@ -720,9 +743,12 @@
                         "id": "cat_plum",
                         "name": "涼果/話梅"
             }
-        ];
+];
 
         const DEFAULT_PRODUCTS = [
+            {"id": "p_1795403521484", "code": "13001-A", "barcode": "13001-A", "categoryId": "cat_candy", "name": "藍罐 牛奶仔超濃奶糖", "units": [{"unit": "袋", "spec": "30gX10罐"}]},
+            {"id": "p_1795390886443", "code": "026021-D", "barcode": "026021-D", "categoryId": "cat_candy", "name": "迷你青蘋果糖", "units": [{"unit": "盒", "spec": "9gX30小樽"}]},
+            {"id": "p_1795390743634", "code": "60014", "barcode": "6924187845510", "categoryId": "cat_nut", "name": "洽洽瓜子", "units": [{"unit": "箱", "spec": "260gX20包"}]},
             {"id": "p_1795310452978", "code": "0128001-H", "barcode": "6920548862028", "categoryId": "cat_candy", "name": "旺仔 QQ糖(水蜜桃)", "units": [{"unit": "袋", "spec": "1X4條X5小包"}]},
             {"id": "p_1795310415388", "code": "0128001-G", "barcode": "6920548862028", "categoryId": "cat_candy", "name": "旺仔 QQ糖(香橙)", "units": [{"unit": "袋", "spec": "1X4條X5小包"}]},
             {"id": "p_1795304141895", "code": "0211001-B", "barcode": "84902750865767", "categoryId": "cat_candy", "name": "特濃8.2牛奶糖(鹽味）", "units": [{"unit": "盒", "spec": "37gX10條"}]},
@@ -796,7 +822,7 @@
             {"id": "p_012003A", "code": "012003-A", "barcode": "012003-A", "categoryId": "cat_candy", "name": "猜一猜果汁軟糖", "units": [{"unit": "盒", "spec": "48小包"}, {"unit": "箱", "spec": "48小包X10盒"}]},
             {"id": "p_012003C", "code": "012003-C", "barcode": "012003-C", "categoryId": "cat_candy", "name": "眼球軟糖", "units": [{"unit": "盒", "spec": "50粒"}, {"unit": "箱", "spec": ""}]},
             {"id": "p_012009", "code": "012009", "barcode": "012009", "categoryId": "cat_candy", "name": "五色彩繩橡皮糖", "units": [{"unit": "袋", "spec": "1X30包"}, {"unit": "箱", "spec": "24袋X30包"}]},
-            {"id": "p_012020", "code": "012020", "barcode": "2856443008305", "categoryId": "cat_candy", "name": "串燒者喱糖", "units": [{"unit": "包", "spec": "1X12支"}, {"unit": "箱", "spec": "24包X12支"}]},
+            {"id": "p_012020", "code": "012020", "barcode": "8850644001305", "categoryId": "cat_candy", "name": "串燒者喱糖", "units": [{"unit": "包", "spec": "1X12支"}, {"unit": "箱", "spec": "24包X12支"}]},
             {"id": "p_012020B", "code": "012020-B", "barcode": "012020-B", "categoryId": "cat_candy", "name": "富貴者喱糖 (5KG)", "units": [{"unit": "袋", "spec": "5KG"}, {"unit": "箱", "spec": "5KGX2袋"}]},
             {"id": "p_012021B", "code": "012021-B", "barcode": "012021-B", "categoryId": "cat_candy", "name": "扁帶糖(士多啤梨味)", "units": [{"unit": "盒", "spec": "1盒1500g"}]},
             {"id": "p_012023B", "code": "012023-B", "barcode": "012023-B", "categoryId": "cat_candy", "name": "士的糖(士多啤梨味)", "units": [{"unit": "盒", "spec": "1盒1500g"}]},
@@ -809,7 +835,7 @@
             {"id": "p_0121008", "code": "0121008", "barcode": "0121008", "categoryId": "cat_candy", "name": "袋裝橡皮糖(酸砂荔枝梅)", "units": [{"unit": "袋", "spec": "1.5kg"}]},
             {"id": "p_0121009", "code": "0121009", "barcode": "0121009", "categoryId": "cat_candy", "name": "袋裝橡皮糖(砂荔枝片)", "units": [{"unit": "袋", "spec": "1.5kg"}]},
             {"id": "p_0121010", "code": "0121010", "barcode": "0121010", "categoryId": "cat_candy", "name": "袋裝橡皮糖(巨形砂可樂)", "units": [{"unit": "袋", "spec": "1.5kg"}, {"unit": "箱", "spec": "1.5kgX7袋"}]},
-            {"id": "p_0122A", "code": "0122-A", "barcode": "0122-A", "categoryId": "cat_candy", "name": "EDO 腰豆糖 (什果味)", "units": [{"unit": "盒", "spec": "20gX12包"}, {"unit": "箱", "spec": "20gX12包X12盒"}]},
+            {"id": "p_0122A", "code": "0122-A", "barcode": "8852047237411", "categoryId": "cat_candy", "name": "EDO 腰豆糖 (什果味)", "units": [{"unit": "盒", "spec": "20gX12包"}, {"unit": "箱", "spec": "20gX12包X12盒"}]},
             {"id": "p_0124001", "code": "0124001", "barcode": "8992741956307", "categoryId": "cat_candy", "name": "YUPI 84g迷你漢堡橡皮糖", "units": [{"unit": "包", "spec": "84g"}, {"unit": "箱", "spec": "84gX24包"}]},
             {"id": "p_0124002A", "code": "0124002-A", "barcode": "0124002-A", "categoryId": "cat_candy", "name": "YUPI 橡皮糖(水果拼盤橡皮)", "units": [{"unit": "盒", "spec": "32gX24片"}, {"unit": "個", "spec": ""}]},
             {"id": "p_0124002B", "code": "0124002-B", "barcode": "0124002-B", "categoryId": "cat_candy", "name": "YUPI 橡皮糖(海鮮拼盤橡皮)", "units": [{"unit": "盒", "spec": "32gX24片"}, {"unit": "個", "spec": ""}]},
@@ -983,7 +1009,7 @@
             {"id": "p_1003001E", "code": "1003001-E", "barcode": "4897878630028", "categoryId": "cat_noodle", "name": "合味道 大杯麵(芝士咖喱)", "units": [{"unit": "箱", "spec": "1X12杯"}, {"unit": "扎", "spec": "2盒X12杯"}]},
             {"id": "p_1003001F", "code": "1003001-F", "barcode": "4897878630028", "categoryId": "cat_noodle", "name": "合味道 大杯麵(XO)", "units": [{"unit": "箱", "spec": "99gX12杯"}, {"unit": "扎", "spec": "99gX24杯"}]},
             {"id": "p_1003001G", "code": "1003001-G", "barcode": "4897878630028", "categoryId": "cat_noodle", "name": "合味道 大杯麵(極辛豬骨)", "units": [{"unit": "盒", "spec": "1X12杯"}, {"unit": "扎", "spec": "2盒X12杯"}]},
-            {"id": "p_1006001A", "code": "1006001-A", "barcode": "1006001-A", "categoryId": "cat_noodle", "name": "媽咪麵 (單包裝)", "units": [{"unit": "盒", "spec": "60gX40包"}, {"unit": "扎", "spec": "60gX40包X3箱"}]},
+            {"id": "p_1006001A", "code": "1006001-A", "barcode": "051325115115", "categoryId": "cat_noodle", "name": "媽咪麵 (單包裝)", "units": [{"unit": "盒", "spec": "60gX40包"}, {"unit": "扎", "spec": "60gX40包X3箱"}]},
             {"id": "p_1006001B", "code": "1006001-B", "barcode": "1006001-B", "categoryId": "cat_noodle", "name": "媽咪麵 (五包裝)", "units": [{"unit": "盒", "spec": "60gX5包X8袋"}, {"unit": "扎", "spec": "5包X8袋X3箱"}]},
             {"id": "p_1007001C", "code": "1007001-C", "barcode": "1007001-C", "categoryId": "cat_noodle", "name": "童星 大闊條 (炒麵味)", "units": [{"unit": "箱", "spec": "110gX16包"}, {"unit": "個", "spec": ""}]},
             {"id": "p_1007001E", "code": "1007001-E", "barcode": "1007001-E", "categoryId": "cat_noodle", "name": "童星 大闊條 (雞肉味)", "units": [{"unit": "箱", "spec": "99gX12包"}, {"unit": "個", "spec": ""}]},
@@ -1142,8 +1168,8 @@
             {"id": "p_28004B", "code": "28004-B", "barcode": "28004-B", "categoryId": "cat_chips", "name": "明輝 80g印尼蝦片 (咖哩味)", "units": [{"unit": "箱", "spec": "80gX15包"}, {"unit": "箱", "spec": ""}]},
             {"id": "p_28005", "code": "28005", "barcode": "28005", "categoryId": "cat_chips", "name": "明輝 20g印尼蝦片 (分享裝)", "units": [{"unit": "箱", "spec": "20gX5包X14袋"}, {"unit": "個", "spec": ""}]},
             {"id": "p_28006", "code": "28006", "barcode": "28006", "categoryId": "cat_chips", "name": "明輝 50g黃金蝦蝦片", "units": [{"unit": "箱", "spec": "50gX12包"}, {"unit": "箱", "spec": ""}]},
-            {"id": "p_30002A", "code": "30002-A", "barcode": "4991017171882", "categoryId": "cat_toy", "name": "達輝力(薄荷)", "units": [{"unit": "盒", "spec": "1盒X20小盒"}]},
-            {"id": "p_30002B", "code": "30002-B", "barcode": "4991017171882", "categoryId": "cat_toy", "name": "達輝力(雜錦)", "units": [{"unit": "盒", "spec": "1盒X20小盒"}]},
+            {"id": "p_30002A", "code": "30002-A", "barcode": "8991001501882", "categoryId": "cat_toy", "name": "達輝力(薄荷)", "units": [{"unit": "盒", "spec": "1盒X20小盒"}]},
+            {"id": "p_30002B", "code": "30002-B", "barcode": "8991001501882", "categoryId": "cat_toy", "name": "達輝力(雜錦)", "units": [{"unit": "盒", "spec": "1盒X20小盒"}]},
             {"id": "p_30004B", "code": "30004-B", "barcode": "30004-B", "categoryId": "cat_toy", "name": "恐龍蛋", "units": [{"unit": "條", "spec": "1x8個"}, {"unit": "箱", "spec": "8個x4條"}]},
             {"id": "p_30004C", "code": "30004-C", "barcode": "30004-C", "categoryId": "cat_toy", "name": "多變蛋 (汽車版)", "units": [{"unit": "條", "spec": "1x8個"}, {"unit": "箱", "spec": "8個x4條"}]},
             {"id": "p_30004D", "code": "30004-D", "barcode": "30004-D", "categoryId": "cat_toy", "name": "多變蛋 (恐龍版)", "units": [{"unit": "條", "spec": "1x8個"}, {"unit": "箱", "spec": "8個x4條"}]},
@@ -1203,10 +1229,10 @@
             {"id": "p_36004C", "code": "36004-C", "barcode": "36004-C", "categoryId": "cat_choco", "name": "明治 筒裝DD朱古力(青提子)", "units": [{"unit": "盒", "spec": "1袋X6筒"}, {"unit": "箱", "spec": "6筒X8盒"}]},
             {"id": "p_36004D", "code": "36004-D", "barcode": "36004-D", "categoryId": "cat_choco", "name": "明治 筒裝DD朱古力(芒果)", "units": [{"unit": "盒", "spec": "1袋X6筒"}, {"unit": "個", "spec": ""}]},
             {"id": "p_36004E", "code": "36004-E", "barcode": "36004-E", "categoryId": "cat_choco", "name": "明治 筒裝DD朱古力(蘋果)", "units": [{"unit": "盒", "spec": "1袋X6筒"}, {"unit": "個", "spec": ""}]},
-            {"id": "p_36009A", "code": "36009-A", "barcode": "36009-A", "categoryId": "cat_choco", "name": "明治 鋼琴 至尊朱古力 (特濃)", "units": [{"unit": "盒", "spec": "1X6小盒"}, {"unit": "箱", "spec": "6小盒X8盒"}]},
-            {"id": "p_36009B", "code": "36009-B", "barcode": "84902777026103", "categoryId": "cat_choco", "name": "明治 鋼琴 至尊朱古力 (牛奶)", "units": [{"unit": "盒", "spec": "1X6小盒"}]},
-            {"id": "p_36009C", "code": "36009-C", "barcode": "36009-C", "categoryId": "cat_choco", "name": "明治 鋼琴 至尊朱古力 (綠茶)", "units": [{"unit": "盒", "spec": "1X6小盒"}, {"unit": "箱", "spec": "6小盒X8盒"}]},
-            {"id": "p_36009D", "code": "36009-D", "barcode": "36009-D", "categoryId": "cat_choco", "name": "明治 鋼琴 至尊朱古力 (特濃牛奶)", "units": [{"unit": "盒", "spec": "1X6小盒"}, {"unit": "箱", "spec": "6小盒X8盒"}]},
+            {"id": "p_36009A", "code": "36009-A", "barcode": "84902777026103", "categoryId": "cat_choco", "name": "明治 鋼琴 至尊朱古力 (特濃。黑）", "units": [{"unit": "盒", "spec": "1X6小盒"}, {"unit": "箱", "spec": "6小盒X8盒"}]},
+            {"id": "p_36009B", "code": "36009-B", "barcode": "84902777026103", "categoryId": "cat_choco", "name": "明治 鋼琴 至尊朱古力 (牛奶。啡）", "units": [{"unit": "盒", "spec": "1X6小盒"}]},
+            {"id": "p_36009C", "code": "36009-C", "barcode": "84902777026103", "categoryId": "cat_choco", "name": "明治 鋼琴 至尊朱古力 (綠茶)", "units": [{"unit": "盒", "spec": "1X6小盒"}, {"unit": "箱", "spec": "6小盒X8盒"}]},
+            {"id": "p_36009D", "code": "36009-D", "barcode": "84902777026103", "categoryId": "cat_choco", "name": "明治 鋼琴 至尊朱古力 (特濃牛奶。紅）", "units": [{"unit": "盒", "spec": "1X6小盒"}, {"unit": "箱", "spec": "6小盒X8盒"}]},
             {"id": "p_36012B", "code": "36012-B", "barcode": "36012-B", "categoryId": "cat_choco", "name": "明治 雪吻朱古力 (士多)", "units": [{"unit": "盒", "spec": "56gX5小盒"}, {"unit": "箱", "spec": ""}]},
             {"id": "p_36012C", "code": "36012-C", "barcode": "36012-C", "categoryId": "cat_choco", "name": "明治 雪吻朱古力 (綠茶)", "units": [{"unit": "盒", "spec": "56gX5小盒"}, {"unit": "箱", "spec": ""}]},
             {"id": "p_36012D", "code": "36012-D", "barcode": "36012-D", "categoryId": "cat_choco", "name": "明治 雪吻朱古力 (芒果)", "units": [{"unit": "盒", "spec": "56gX5小盒"}, {"unit": "箱", "spec": ""}]},
@@ -1221,9 +1247,9 @@
             {"id": "p_37004B", "code": "37004-B", "barcode": "37004-B", "categoryId": "cat_choco", "name": "散裝 迷你三角朱古力(1kg)", "units": [{"unit": "袋", "spec": "1kg"}, {"unit": "箱", "spec": "8kg"}]},
             {"id": "p_37005", "code": "37005", "barcode": "37005", "categoryId": "cat_choco", "name": "散裝 迷你KK朱古力", "units": [{"unit": "袋", "spec": "1袋X30條"}, {"unit": "箱", "spec": "6.68kg"}]},
             {"id": "p_37007", "code": "37007", "barcode": "37007", "categoryId": "cat_choco", "name": "散裝 雀巢迷你甘脆", "units": [{"unit": "袋", "spec": "1kg"}, {"unit": "箱", "spec": "1kgX12袋"}]},
-            {"id": "p_38001B", "code": "38001-B", "barcode": "38001-B", "categoryId": "cat_choco", "name": "森永DARS朱古力(白朱古力)", "units": [{"unit": "盒", "spec": "1盒X10小盒"}, {"unit": "個", "spec": ""}]},
-            {"id": "p_38001C", "code": "38001-C", "barcode": "38001-C", "categoryId": "cat_choco", "name": "森永DARS朱古力(紅 牛奶)", "units": [{"unit": "盒", "spec": "1盒X10小盒"}, {"unit": "個", "spec": ""}]},
-            {"id": "p_38001D", "code": "38001-D", "barcode": "38001-D", "categoryId": "cat_choco", "name": "森永DARS朱古力(可可牛奶)", "units": [{"unit": "盒", "spec": "1盒X10小盒"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_38001B", "code": "38001-B", "barcode": "4902888256226", "categoryId": "cat_choco", "name": "森永DARS朱古力(白朱古力)", "units": [{"unit": "盒", "spec": "1盒X10小盒"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_38001C", "code": "38001-C", "barcode": "4902888256226", "categoryId": "cat_choco", "name": "森永DARS朱古力(紅 牛奶)", "units": [{"unit": "盒", "spec": "1盒X10小盒"}, {"unit": "個", "spec": ""}]},
+            {"id": "p_38001D", "code": "38001-D", "barcode": "4902888256226", "categoryId": "cat_choco", "name": "森永DARS朱古力(可可牛奶)", "units": [{"unit": "盒", "spec": "1盒X10小盒"}, {"unit": "個", "spec": ""}]},
             {"id": "p_38002A", "code": "38002-A", "barcode": "38002-A", "categoryId": "cat_choco", "name": "不二家 孖寶朱古力", "units": [{"unit": "盒", "spec": "24gX12排"}, {"unit": "箱", "spec": "24gX12排X12盒"}]},
             {"id": "p_38003A", "code": "38003-A", "barcode": "38003-A", "categoryId": "cat_choco", "name": "大咀鳥 朱古力(牛奶)", "units": [{"unit": "盒", "spec": "20小盒"}, {"unit": "個", "spec": ""}]},
             {"id": "p_38003B", "code": "38003-B", "barcode": "38003-B", "categoryId": "cat_choco", "name": "大咀鳥 朱古力(杏仁)", "units": [{"unit": "盒", "spec": "20小盒"}, {"unit": "個", "spec": ""}]},
@@ -1291,13 +1317,13 @@
             {"id": "p_411003B", "code": "411003-B", "barcode": "411003-B", "categoryId": "cat_biscuit", "name": "四洲 甘大滋 盒裝百力滋(紫菜)", "units": [{"unit": "盒", "spec": "1盒X10盒X40g"}, {"unit": "箱", "spec": ""}]},
             {"id": "p_411003C", "code": "411003-C", "barcode": "411003-C", "categoryId": "cat_biscuit", "name": "四洲 甘大滋 盒裝百力滋(蕃茄)", "units": [{"unit": "盒", "spec": "1盒X10盒X40g"}, {"unit": "箱", "spec": ""}]},
             {"id": "p_411004A", "code": "411004-A", "barcode": "411004-A", "categoryId": "cat_biscuit", "name": "四洲 梳打餅 (奶鹽)", "units": [{"unit": "箱", "spec": "1箱X24包X100g"}, {"unit": "箱", "spec": ""}]},
-            {"id": "p_412001B", "code": "412001-B", "barcode": "412001-B", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(清湯薯)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": "1X8盒X10條"}]},
-            {"id": "p_412001C", "code": "412001-C", "barcode": "412001-C", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(芝士)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": "1X8盒X10條"}]},
-            {"id": "p_412001D", "code": "412001-D", "barcode": "412001-D", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(朱古力碎曲奇)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": "1X8盒X10條"}]},
-            {"id": "p_412001E", "code": "412001-E", "barcode": "412001-E", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(白夾心)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": "1X8盒X10條"}]},
-            {"id": "p_412001F", "code": "412001-F", "barcode": "412001-F", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(紫夾心)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": "1X8盒X10條"}]},
-            {"id": "p_412001G", "code": "412001-G", "barcode": "412001-G", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(芝士夾心)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": "1X8盒X10條"}]},
-            {"id": "p_412001H", "code": "412001-H", "barcode": "412001-H", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(蝦片)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": "1X8盒X10條"}]},
+            {"id": "p_412001B", "code": "412001-B", "barcode": "4901360358311", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(清湯薯)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": "1X8盒X10條"}]},
+            {"id": "p_412001C", "code": "412001-C", "barcode": "4901360358311", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(芝士)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": "1X8盒X10條"}]},
+            {"id": "p_412001D", "code": "412001-D", "barcode": "4901360358311", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(朱古力碎曲奇)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": "1X8盒X10條"}]},
+            {"id": "p_412001E", "code": "412001-E", "barcode": "4901360358311", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(白夾心)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": "1X8盒X10條"}]},
+            {"id": "p_412001F", "code": "412001-F", "barcode": "4901360358311", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(紫夾心)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": "1X8盒X10條"}]},
+            {"id": "p_412001G", "code": "412001-G", "barcode": "4901360358311", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(芝士夾心)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": "1X8盒X10條"}]},
+            {"id": "p_412001H", "code": "412001-H", "barcode": "4901360358311", "categoryId": "cat_biscuit", "name": "百邦 日本條裝餅(蝦片)", "units": [{"unit": "盒", "spec": "1X10條"}, {"unit": "箱", "spec": "1X8盒X10條"}]},
             {"id": "p_414000A", "code": "414000-A", "barcode": "414000-A", "categoryId": "cat_biscuit", "name": "麥維他 迷你裝消化餅(18裝)", "units": [{"unit": "盒", "spec": "35gx12筒"}, {"unit": "箱", "spec": "35gx12筒X18盒"}]},
             {"id": "p_415010E", "code": "415010-E", "barcode": "415010-E", "categoryId": "cat_biscuit", "name": "蒟蒻糙米卷 (海苔口味)", "units": [{"unit": "袋", "spec": "160g"}, {"unit": "箱", "spec": "160gX12袋"}]},
             {"id": "p_416001A", "code": "416001-A", "barcode": "416001-A", "categoryId": "cat_biscuit", "name": "包裝動物餅(紫菜)", "units": [{"unit": "箱", "spec": "10袋X144g"}, {"unit": "個", "spec": ""}]},
@@ -1526,7 +1552,7 @@
             {"id": "p_6512A", "code": "6512-A", "barcode": "6512-A", "categoryId": "cat_meat", "name": "超味魷魚 排裝 (橙色)", "units": [{"unit": "排", "spec": "6gX12包"}, {"unit": "箱", "spec": "12包X24排"}]},
             {"id": "p_6512B", "code": "6512-B", "barcode": "6512-B", "categoryId": "cat_meat", "name": "超味魷魚 排裝 (藍色)", "units": [{"unit": "排", "spec": "6gX12包"}, {"unit": "箱", "spec": "12包X24排"}]},
             {"id": "p_6512C", "code": "6512-C", "barcode": "6512-C", "categoryId": "cat_meat", "name": "超味魷魚 排裝 (紅色)", "units": [{"unit": "排", "spec": "6gX12包"}, {"unit": "箱", "spec": "12包X24排"}]},
-            {"id": "p_6531B", "code": "6531-B", "barcode": "6531-B", "categoryId": "cat_meat", "name": "大發 8g 鱈魚絲", "units": [{"unit": "袋", "spec": "1袋X30包"}]},
+            {"id": "p_6531B", "code": "6531-B", "barcode": "9556353050670", "categoryId": "cat_meat", "name": "大發 8g 鱈魚絲", "units": [{"unit": "袋", "spec": "1袋X30包"}]},
             {"id": "p_6535", "code": "6535", "barcode": "6535", "categoryId": "cat_meat", "name": "泰國長魷魚片", "units": [{"unit": "箱", "spec": "1X24片"}, {"unit": "個", "spec": ""}]},
             {"id": "p_70005A", "code": "70005-A", "barcode": "70005-A", "categoryId": "cat_biscuit", "name": "EDO 朱古力批", "units": [{"unit": "箱", "spec": "1箱X8盒X10件"}, {"unit": "個", "spec": ""}]},
             {"id": "p_70005B", "code": "70005-B", "barcode": "70005-B", "categoryId": "cat_biscuit", "name": "EDO 士多啤梨批", "units": [{"unit": "箱", "spec": "1箱X8盒X10件"}, {"unit": "個", "spec": ""}]},
@@ -1550,9 +1576,9 @@
         ];
 
         const STORAGE_KEYS = {
-            UNITS: 'hhy_noprice_units_v7',
-            CATEGORIES: 'hhy_noprice_categories_v7',
-            PRODUCTS: 'hhy_noprice_products_v7',
+            UNITS: 'hhy_noprice_units_v8',
+            CATEGORIES: 'hhy_noprice_categories_v8',
+            PRODUCTS: 'hhy_noprice_products_v8',
             CART: 'hhy_noprice_cart_v3',
             WA_PHONE: 'hhy_noprice_wa_phone_v3'
         };
@@ -1573,6 +1599,8 @@
         let selectedCategory = 'ALL';
         let searchQuery = '';
         let selectedUnitsMap = {};
+        let sortField = 'default'; // 'default' | 'code' | 'name'
+        let sortDir = 'asc';       // 'asc' | 'desc'
 
         let mediaStream = null;
         let scanLoopId = null;
@@ -1683,8 +1711,67 @@
             renderProducts();
         }
 
+
+        function compareProducts(a, b) {
+            if (sortField === 'code') {
+                const cmp = String(a.code || '').localeCompare(String(b.code || ''), 'en', { numeric: true, sensitivity: 'base' });
+                return sortDir === 'asc' ? cmp : -cmp;
+            }
+            if (sortField === 'name') {
+                const cmp = String(a.name || '').localeCompare(String(b.name || ''), 'zh-Hant-HK', { numeric: true, sensitivity: 'base' });
+                return sortDir === 'asc' ? cmp : -cmp;
+            }
+            return 0;
+        }
+
+        function updateSortButtonsUI() {
+            const btnDefault = document.getElementById('sortBtnDefault');
+            const btnCode = document.getElementById('sortBtnCode');
+            const btnName = document.getElementById('sortBtnName');
+            const mBtnCode = document.getElementById('manageSortBtnCode');
+            const mBtnName = document.getElementById('manageSortBtnName');
+            const arrow = sortDir === 'asc' ? '↑' : '↓';
+
+            if (btnDefault) btnDefault.classList.toggle('active', sortField === 'default');
+            if (btnCode) {
+                btnCode.classList.toggle('active', sortField === 'code');
+                btnCode.textContent = sortField === 'code' ? `編號 ${arrow}` : '編號 ↑';
+            }
+            if (btnName) {
+                btnName.classList.toggle('active', sortField === 'name');
+                btnName.textContent = sortField === 'name' ? `名稱 ${arrow}` : '名稱 ↑';
+            }
+            if (mBtnCode) {
+                mBtnCode.classList.toggle('active', sortField === 'code');
+                mBtnCode.textContent = sortField === 'code' ? `按編號 ${arrow}` : '按編號';
+            }
+            if (mBtnName) {
+                mBtnName.classList.toggle('active', sortField === 'name');
+                mBtnName.textContent = sortField === 'name' ? `按名稱 ${arrow}` : '按名稱';
+            }
+        }
+
+        function toggleSortMode(field) {
+            if (field === 'default') {
+                sortField = 'default';
+                sortDir = 'asc';
+            } else if (sortField === field) {
+                sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortField = field;
+                sortDir = 'asc';
+            }
+            updateSortButtonsUI();
+            renderProducts();
+            if (document.getElementById('manageModal').classList.contains('open')) {
+                renderManageProductList();
+            }
+            const label = sortField === 'default' ? '預設順序' : (sortField === 'code' ? `編號 (${sortDir === 'asc' ? '由細到大' : '由大到細'})` : `名稱 (${sortDir === 'asc' ? 'A→Z / 筆劃' : 'Z→A / 筆劃'})`);
+            showToast(`已切換排序：${label}`);
+        }
+
         function getFilteredProducts() {
-            return products.filter(p => {
+            const list = products.filter(p => {
                 if (selectedCategory !== 'ALL' && p.categoryId !== selectedCategory) return false;
                 if (!searchQuery) return true;
                 return (
@@ -1693,6 +1780,10 @@
                     (p.barcode && p.barcode.toLowerCase().includes(searchQuery))
                 );
             });
+            if (sortField !== 'default') {
+                return [...list].sort(compareProducts);
+            }
+            return list;
         }
 
         function renderProducts() {
@@ -2406,9 +2497,12 @@
 
         function renderManageProductList() {
             const q = (document.getElementById('manageSearchInput').value || '').trim().toLowerCase();
-            const list = products.filter(p =>
+            let list = products.filter(p =>
                 !q || p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q) || (p.barcode && p.barcode.toLowerCase().includes(q))
             );
+            if (sortField !== 'default') {
+                list = [...list].sort(compareProducts);
+            }
             document.getElementById('manageProdCount').textContent = list.length;
 
             document.getElementById('manageProductList').innerHTML = list.map(p => {
